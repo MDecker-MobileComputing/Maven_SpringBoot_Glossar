@@ -2,12 +2,10 @@ package de.eldecker.dhbw.spring.glossar.db;
 
 import static java.time.LocalDateTime.now;
 
-import de.eldecker.dhbw.spring.glossar.db.Datenbank;
 import de.eldecker.dhbw.spring.glossar.db.entities.GlossarEntity;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 
 import org.slf4j.Logger;
@@ -18,11 +16,16 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 
+/**
+ * Diese {@code run()}-Methode dieser Bean wird beim Start automatisch ausgeführt,
+ * weil die Klasse das Interface {@code ApplicationRunner} implementiert.
+ */
 @Component
 public class BeispielDatenLadenRunner implements ApplicationRunner {
 
     private Logger LOG = LoggerFactory.getLogger( BeispielDatenLadenRunner.class );
 
+    /** Repository-Bean für Datenbankzugriff. */
     private Datenbank _datenbank;
 
 
@@ -35,6 +38,11 @@ public class BeispielDatenLadenRunner implements ApplicationRunner {
         _datenbank = datenbank;
     }
 
+    
+    /**
+     * Die Methode schreibt einige Datensätze in die Datenbank, aber nur, wenn es
+     * noch keinen einzigen Glossareintrag gibt. 
+     */
     @Override
     @Transactional
     public void run( ApplicationArguments args ) throws Exception {
@@ -47,7 +55,6 @@ public class BeispielDatenLadenRunner implements ApplicationRunner {
             LOG.info( "Beispiel-Daten werden nicht geladen, da bereits Einträge vorhanden sind." );
             return;
         }
-
 
 
         final LocalDateTime jetzt = now();

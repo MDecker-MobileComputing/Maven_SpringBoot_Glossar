@@ -1,7 +1,5 @@
 package de.eldecker.dhbw.spring.glossar.db.entities;
 
-import static java.time.LocalDateTime.now;
-
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;

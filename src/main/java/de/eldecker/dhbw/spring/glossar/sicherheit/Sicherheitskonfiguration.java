@@ -1,4 +1,4 @@
-package de.eldecker.dhbw.spring.glossar.konfig;
+package de.eldecker.dhbw.spring.glossar.sicherheit;
 
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
@@ -19,7 +19,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class Sicherheitskonfiguration {
 
     /** Rolle für Nutzer, die Glossareinträge erstellen und ändern dürfen. */
-    private static final String ROLLE_AUTOR = "autor";
+    public static final String ROLLE_AUTOR = "autor";
 
     /** Array mit Pfaden, auf die auch ohne Authentifizierung zugegriffen werden kann. */
     private final static AntPathRequestMatcher[] OEFFENTLICHE_PFADE_ARRAY = { antMatcher( "/index.html"      ),
