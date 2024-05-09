@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
 /**
- * Einstiegspunkt der Webapp.
+ * Einstiegspunkt der Web-App.
  */
 @SpringBootApplication
 public class GlossarApplication {
