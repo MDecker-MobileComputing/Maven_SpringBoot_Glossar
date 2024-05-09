@@ -21,9 +21,9 @@ import org.springframework.stereotype.Component;
  * weil die Klasse das Interface {@code ApplicationRunner} implementiert.
  */
 @Component
-public class BeispielDatenLadenRunner implements ApplicationRunner {
+public class BeispielDatenImportRunnter implements ApplicationRunner {
 
-    private Logger LOG = LoggerFactory.getLogger( BeispielDatenLadenRunner.class );
+    private Logger LOG = LoggerFactory.getLogger( BeispielDatenImportRunnter.class );
 
     /** Repository-Bean für Datenbankzugriff. */
     private Datenbank _datenbank;
@@ -33,7 +33,7 @@ public class BeispielDatenLadenRunner implements ApplicationRunner {
      * Konstruktor für <i>Dependency Injection</i>.
      */
     @Autowired
-    public BeispielDatenLadenRunner( Datenbank datenbank ) {
+    public BeispielDatenImportRunnter( Datenbank datenbank ) {
 
         _datenbank = datenbank;
     }
@@ -47,7 +47,7 @@ public class BeispielDatenLadenRunner implements ApplicationRunner {
     @Transactional
     public void run( ApplicationArguments args ) throws Exception {
 
-        final long anzahlEintraege = _datenbank.getAnzahlGlossareintraege();
+        final int anzahlEintraege = _datenbank.getAnzahlGlossareintraege();
         LOG.info( "Anzahl der Glossareinträge in der Datenbank: {}", anzahlEintraege );
 
         if ( anzahlEintraege > 0 ) {

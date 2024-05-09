@@ -31,10 +31,11 @@ public class Datenbank {
      *
      * @return Anzahl der Glossareinträge.
      */
-    public long getAnzahlGlossareintraege() {
+    public int getAnzahlGlossareintraege() {
 
         final Query query = _em.createQuery("SELECT COUNT(g) FROM GlossarEntity g");
-        return (long) query.getSingleResult();
+        Long l = (long) query.getSingleResult();
+        return l.intValue();
     }
 
 
