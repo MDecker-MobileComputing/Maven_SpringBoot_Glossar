@@ -17,10 +17,20 @@ import org.springframework.stereotype.Service;
 public class MeinUserDetailsService implements UserDetailsService {
 
     private Logger LOG = LoggerFactory.getLogger( MeinUserDetailsService.class );
-    
-    
+        
     final PasswordEncoder _passwordEncoder = createDelegatingPasswordEncoder();
     
+    
+    /**
+     * Diese Methode wird aufgerufen, wenn ein Nutzer {@code nutzername} und {@code passwort} 
+     * im Anmeldeformular eingegeben hat.
+     * 
+     * @param nutzername Im Anmeldeformular eingegebener Nutzername
+     * 
+     * @return Nutzer-Objekt für {@code nutzername}, enthält u.a. Passwort.
+     * 
+     * @throws UsernameNotFoundException Es gibt keinen Nutzer mit {@code nutzername}
+     */
     @Override
     public UserDetails loadUserByUsername( String nutzername ) throws UsernameNotFoundException {
 
