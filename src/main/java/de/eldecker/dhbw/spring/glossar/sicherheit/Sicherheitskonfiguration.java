@@ -17,10 +17,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 @EnableWebSecurity
 public class Sicherheitskonfiguration {
-
-    /** Rolle für Nutzer, die Glossareinträge erstellen und ändern dürfen. */
-    public static final String ROLLE_AUTOR = "autor";
-
+        
     /** Array mit Pfaden, auf die auch ohne Authentifizierung zugegriffen werden kann. */
     private final static AntPathRequestMatcher[] OEFFENTLICHE_PFADE_ARRAY = { antMatcher( "/index.html"      ),
                                                                               antMatcher( "/abgemeldet.html" ),
@@ -45,7 +42,7 @@ public class Sicherheitskonfiguration {
                                            .invalidateHttpSession( true )
                                            .deleteCookies( "JSESSIONID" )
                        )
-                   .headers( headers -> headers.disable() )
+                   .headers( headers -> headers.disable() ) // damit h2-console funktioniert
                    .build();
     }
 

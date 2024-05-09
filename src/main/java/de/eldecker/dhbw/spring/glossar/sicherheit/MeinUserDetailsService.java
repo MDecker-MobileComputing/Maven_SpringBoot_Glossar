@@ -1,6 +1,5 @@
 package de.eldecker.dhbw.spring.glossar.sicherheit;
 
-import static de.eldecker.dhbw.spring.glossar.sicherheit.Sicherheitskonfiguration.ROLLE_AUTOR;
 import static org.springframework.security.crypto.factory.PasswordEncoderFactories.createDelegatingPasswordEncoder;
 
 import org.slf4j.Logger;
@@ -21,6 +20,9 @@ import org.springframework.stereotype.Service;
 public class MeinUserDetailsService implements UserDetailsService {
 
     private Logger LOG = LoggerFactory.getLogger( MeinUserDetailsService.class );
+    
+    /** Rolle für Nutzer, die Glossareinträge erstellen und ändern dürfen. */
+    public static final String ROLLE_AUTOR = "autor";
         
     /** Objekt für Kodierung Passwort. */
     final PasswordEncoder _passwordEncoder = createDelegatingPasswordEncoder();
