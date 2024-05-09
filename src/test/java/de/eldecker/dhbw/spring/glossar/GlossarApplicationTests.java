@@ -1,10 +1,10 @@
-package de.eldecker.dhbw.spring.Glossar;
+package de.eldecker.dhbw.spring.glossar;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class MiniCmsFurGlossarApplicationTests {
+class GlossarApplicationTests {
 
 	@Test
 	void contextLoads() {
