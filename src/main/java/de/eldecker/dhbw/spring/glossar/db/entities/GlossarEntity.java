@@ -46,6 +46,22 @@ public class GlossarEntity {
         _begriff    = "";
         _erklaerung = "";
     }
+    
+    
+    /**
+     * Konstruktor, wenn nur die Attribute {@code id} und {@code begriff}
+     * gefüllt werden sollen (z.B. für reine Anzeige der Glossarbegriffe
+     * ohne Erklärung, aber mit Link auf Detailseite). 
+     * 
+     * @param id Key des Glossareintrags
+     * 
+     * @param begriff Glossarbegriff.
+     */
+    public GlossarEntity(Long id, String begriff) {
+                
+        this( begriff, "", null );
+        _id = id;
+    }    
 
 
     /**
@@ -76,18 +92,17 @@ public class GlossarEntity {
         _begriff = begriff;
     }
 
-
     public String getErklaerung() {
 
         return _erklaerung;
     }
-
 
     public void setErklaerung( String erklaerung ) {
 
         _erklaerung = erklaerung;
     }
 
+    
     public LocalDateTime getZeitpunktErzeugung() {
 
         return _zeitpunktErzeugung;

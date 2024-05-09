@@ -2,11 +2,14 @@ package de.eldecker.dhbw.spring.glossar.db;
 
 import de.eldecker.dhbw.spring.glossar.db.entities.GlossarEntity;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 
 @Repository
@@ -33,9 +36,13 @@ public class Datenbank {
      */
     public int getAnzahlGlossareintraege() {
 
-        final Query query = _em.createQuery("SELECT COUNT(g) FROM GlossarEntity g");
-        Long l = (long) query.getSingleResult();
-        return l.intValue();
+        final Query query = _em.createQuery( "SELECT COUNT(g) FROM GlossarEntity g" );
+        
+        final Long ergebnisLong = (long) query.getSingleResult();
+        
+        final int ergebnisInt = ergebnisLong.intValue();
+        
+        return ergebnisInt;
     }
 
 
@@ -48,5 +55,29 @@ public class Datenbank {
 
         _em.persist( eintrag );
     }
+    
+    
+    /**
+     * Liste aller Glossarbegriffe, aber nur ID und Begriff (nicht aber Erklärung und weitere Attribute)
+     * sind gefüllt.
+     * <br><br>
+     * 
+     * Für diese Methode wird ein spezieller Konstruktor der Entity-Klasse {@link GlossarEntity} verwendet,
+     * der nur die ID und den Begriff füllt.
+     * 
+     * @return Liste aller Glossarbegriffe, alphabetisch sortiert.
+     */
+    public List<GlossarEntity> getGlossarBegriffe() {
+        
+        final String qlString = """
+                                   SELECT new de.eldecker.dhbw.spring.glossar.db.entities.GlossarEntity( g._id, g._begriff ) 
+                                          FROM GlossarEntity g
+                                          ORDER BY g._begriff ASC
+                                """;
+
+        final TypedQuery<GlossarEntity> query = _em.createQuery( qlString, GlossarEntity.class );
+
+        return query.getResultList();
+    }    
 
 }

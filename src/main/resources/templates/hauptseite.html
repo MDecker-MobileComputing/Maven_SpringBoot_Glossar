@@ -15,7 +15,9 @@
     <span th:text="${angemeldeter_nutzer}"></span>
     ( <a href="/logout">Logout</a> )
   </p>
-    
+  <p th:unless="${nutzername != null and nutzername != ''}">
+    Sie sind nicht angemeldet.
+  </p>    
 
   <p>
     Anzahl der Einträge im Glossar: 

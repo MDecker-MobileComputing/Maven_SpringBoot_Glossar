@@ -18,6 +18,8 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 public class Sicherheitskonfiguration {
         
+    private final static NutzerAngemeldetHandler NUTZER_ANGEMELDET_HANDLER = new NutzerAngemeldetHandler();
+    
     /** Array mit Pfaden, auf die auch ohne Authentifizierung zugegriffen werden kann. */
     private final static AntPathRequestMatcher[] OEFFENTLICHE_PFADE_ARRAY = { antMatcher( "/index.html"      ),
                                                                               antMatcher( "/abgemeldet.html" ),
@@ -32,10 +34,12 @@ public class Sicherheitskonfiguration {
     @Bean
     public SecurityFilterChain httpKonfiguration( HttpSecurity http ) throws Exception {
 
+         
+        
         return http.csrf( (csrf) -> csrf.disable() )
                    .authorizeHttpRequests( auth -> auth.requestMatchers( OEFFENTLICHE_PFADE_ARRAY ).permitAll()
                                                        .anyRequest().authenticated() )
-                   .formLogin( formLogin -> formLogin.defaultSuccessUrl( "/app/hauptseite", true ) )
+                   .formLogin( formLogin -> formLogin.successHandler( NUTZER_ANGEMELDET_HANDLER ) ) // im Handler wird auch Weiterleitung auf Hauptseite gemacht                                                      
                    .logout(logout -> logout
                                            .logoutUrl( "/logout" )
                                            .logoutSuccessUrl("/abgemeldet.html")

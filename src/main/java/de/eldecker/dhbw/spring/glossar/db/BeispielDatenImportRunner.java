@@ -21,9 +21,9 @@ import org.springframework.stereotype.Component;
  * weil die Klasse das Interface {@code ApplicationRunner} implementiert.
  */
 @Component
-public class BeispielDatenImportRunnter implements ApplicationRunner {
+public class BeispielDatenImportRunner implements ApplicationRunner {
 
-    private Logger LOG = LoggerFactory.getLogger( BeispielDatenImportRunnter.class );
+    private Logger LOG = LoggerFactory.getLogger( BeispielDatenImportRunner.class );
 
     /** Repository-Bean für Datenbankzugriff. */
     private Datenbank _datenbank;
@@ -33,7 +33,7 @@ public class BeispielDatenImportRunnter implements ApplicationRunner {
      * Konstruktor für <i>Dependency Injection</i>.
      */
     @Autowired
-    public BeispielDatenImportRunnter( Datenbank datenbank ) {
+    public BeispielDatenImportRunner( Datenbank datenbank ) {
 
         _datenbank = datenbank;
     }
@@ -52,23 +52,23 @@ public class BeispielDatenImportRunnter implements ApplicationRunner {
 
         if ( anzahlEintraege > 0 ) {
 
-            LOG.info( "Beispiel-Daten werden nicht geladen, da bereits Einträge vorhanden sind." );
-            return;
-        }
+            LOG.info( "Beispiel-Daten werden nicht geladen, da bereits Einträge vorhanden sind." );            
+            
+        } else {
 
+            final LocalDateTime jetzt = now();
 
-        final LocalDateTime jetzt = now();
+            final GlossarEntity[] eintraege = {
+                                                 new GlossarEntity( "Maven"  , "Build-Management-Tool für Java-Projekte."           , jetzt ),
+                                                 new GlossarEntity( "Phase"  , "Ein Maven-Lifecycle besteht aus mehreren Phasen."   , jetzt ),
+                                                 new GlossarEntity( "pom.xml", "Zentrale Konfigurationsdatei für ein Maven-Projekt.", jetzt )
+                                              };
 
-        final GlossarEntity[] eintraege = {
-                                             new GlossarEntity( "Maven"  , "Build-Management-Tool für Java-Projekte."           , jetzt ),
-                                             new GlossarEntity( "Phase"  , "Ein Maven-Lifecycle besteht aus mehreren Phasen."   , jetzt ),
-                                             new GlossarEntity( "pom.xml", "Zentrale Konfigurationsdatei für ein Maven-Projekt.", jetzt )
-                                          };
+            for ( GlossarEntity eintrag : eintraege ) {
 
-        for ( GlossarEntity eintrag : eintraege ) {
-
-            _datenbank.neuerGlossarEintrag( eintrag );
-            LOG.info( "Beispieldatensatz eingefügt: {}", eintrag );
+                _datenbank.neuerGlossarEintrag( eintrag );
+                LOG.info( "Beispieldatensatz eingefügt: {}", eintrag );
+            }            
         }
     }
 
