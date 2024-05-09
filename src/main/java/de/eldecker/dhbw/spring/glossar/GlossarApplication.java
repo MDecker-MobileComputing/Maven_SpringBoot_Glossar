@@ -12,7 +12,7 @@ public class GlossarApplication {
 
 	public static void main( String[] args ) {
 
-	  SpringApplication.run( GlossarApplication.class, args );
+	    SpringApplication.run( GlossarApplication.class, args );
 	}
 
 }
