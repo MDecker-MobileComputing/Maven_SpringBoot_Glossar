@@ -13,11 +13,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
+/**
+ * Implementierung Interface {@code UserDetailsService}, von der bei Anmeldevorgang 
+ * ein Nutzerobjekt für einen bestimmten Nutzernamen abgefragt.
+ */
 @Service
 public class MeinUserDetailsService implements UserDetailsService {
 
     private Logger LOG = LoggerFactory.getLogger( MeinUserDetailsService.class );
         
+    /** Objekt für Kodierung Passwort. */
     final PasswordEncoder _passwordEncoder = createDelegatingPasswordEncoder();
     
     

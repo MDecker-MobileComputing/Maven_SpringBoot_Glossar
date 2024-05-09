@@ -25,7 +25,8 @@ public class Sicherheitskonfiguration {
     private final static AntPathRequestMatcher[] OEFFENTLICHE_PFADE_ARRAY = { antMatcher( "/index.html"      ),
                                                                               antMatcher( "/abgemeldet.html" ),
                                                                               antMatcher( "/styles.css"      ), // wird von index.html und abgemeldet.html benötigt
-                                                                              antMatcher( "/h2-console/**"   )
+                                                                              antMatcher( "/h2-console/**"   ),
+                                                                              antMatcher( "/app/hauptseite"  )
                                                                             };
 
     /**
