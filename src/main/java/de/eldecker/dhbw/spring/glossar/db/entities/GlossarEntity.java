@@ -1,11 +1,12 @@
 package de.eldecker.dhbw.spring.glossar.db.entities;
 
+import static jakarta.persistence.GenerationType.IDENTITY;
+
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
@@ -22,7 +23,7 @@ public class GlossarEntity {
      * gibt es auch keinen Setter für dieses Attribut.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     @Column(name = "id")
     private Long _id;
 
@@ -34,6 +35,7 @@ public class GlossarEntity {
     @Column(name = "erklaerung")
     private String _erklaerung;
 
+    /** Zeitpunkt (Datum + Uhrzeit) der Erzeugung des Eintrags. */
     @Column(name = "zeitpunkt_erzeugung")
     private LocalDateTime _zeitpunktErzeugung;
 
