@@ -23,7 +23,7 @@ import jakarta.persistence.Table;
 @Table(name = "AUTOREN")
 public class AutorEntity {
 
-    /** Dummy-Zeitpunkt 1.1.1970 als Wert für "Nie angemeldet". */
+    /** Dummy-Datum/Zeit am 1.1.1970 als Wert für "Nie angemeldet". */
     public static final LocalDateTime NIE_ANGEMELDET_DATUM = ofEpochSecond( 0, 0, UTC );
 
     /**
@@ -157,7 +157,32 @@ public class AutorEntity {
         _istAktiv = istAktiv;
     }
 
+        
+    /**
+     * Getter für Zeitpunkt (Datum+Uhrzeit) der letzten Anmeldung des Nutzers;
+     * wenn Datum im Jahr 1970 liegt, dann hat sich der Nutzer noch nie angemeldet.
+     * 
+     * @return Zeitpunkt (Datum+Uhrzeit) der letzten Anmeldung
+     */
+    public LocalDateTime getLetzteAnmeldung() {
+        
+        return _letzteAnmeldung;
+    }
 
+    
+    /**
+     * Getter für Zeitpunkt (Datum+Uhrzeit) der letzten Anmeldung des Nutzers;
+     * wenn der Nutzer sich noch nie angemeldet hat, dann auf
+     * {@link #NIE_ANGEMELDET_DATUM} (Datum im Jahr 1970) setzen.
+     * 
+     * @return Zeitpunkt (Datum+Uhrzeit) der letzten Anmeldung
+     */    
+    public void setLetzteAnmeldung( LocalDateTime letzteAnmeldung ) {
+        
+        _letzteAnmeldung = letzteAnmeldung;
+    }
+
+    
     /**
      * Liefert String-Repräsentation des Objekts zurück.
      *

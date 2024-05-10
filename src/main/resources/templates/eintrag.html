@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="de" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title th:text="'Eintrag für den ' + ${eintrag_datum}"></title>
+  <title th:text="'Eintrag im Glossar: ' + ${begriff}"></title>
   <meta charset="utf-8" >
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" type="text/css" href="../../styles.css">
@@ -9,7 +9,7 @@
 <body>
 
   <h1>
-    Eintrag: <span th:text="${begriff}"></span>
+    Eintrag im Glossar: <span th:text="${begriff}"></span>
   </h1>
 
   <p th:if="${fehlermeldung != null and #strings.length(fehlermeldung) > 0}">

@@ -2,14 +2,20 @@ package de.eldecker.dhbw.spring.glossar.sicherheit;
 
 import static org.springframework.security.crypto.factory.PasswordEncoderFactories.createDelegatingPasswordEncoder;
 
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import de.eldecker.dhbw.spring.glossar.db.Datenbank;
+import de.eldecker.dhbw.spring.glossar.db.entities.AutorEntity;
 
 
 /**
@@ -25,12 +31,28 @@ public class MeinUserDetailsService implements UserDetailsService {
     public static final String ROLLE_AUTOR = "autor";
         
     /** Objekt für Kodierung Passwort. */
-    final PasswordEncoder _passwordEncoder = createDelegatingPasswordEncoder();
+    private final PasswordEncoder _passwordEncoder = createDelegatingPasswordEncoder();
     
+    /** Repository-Bean für Datenbankzugriff. */
+    private final Datenbank _datenbank;
+
+
+    /**
+     * Konstruktor für <i>Dependency Injection</i>.
+     */
+    @Autowired
+    public MeinUserDetailsService( Datenbank datenbank ) {
+
+        _datenbank = datenbank;
+    }
     
+        
     /**
      * Diese Methode wird aufgerufen, wenn ein Nutzer {@code nutzername} und {@code passwort} 
-     * im Anmeldeformular eingegeben hat.
+     * im Anmeldeformular eingegeben hat. Es wird dann in der Datenbank nachgeschaut, ob es
+     * einen aktiven Nutzer mit {@code nutzername} gibt. Ein inaktiver Nutzer wird wie ein
+     * nicht existierender Nutzer behandelt (es wird aber eine Warnung auf den Logger
+     * geschrieben). 
      * 
      * @param nutzername Im Anmeldeformular eingegebener Nutzername
      * 
@@ -43,19 +65,33 @@ public class MeinUserDetailsService implements UserDetailsService {
 
         LOG.info( "Laden von Nutzername \"{}\" angefordert.", nutzername );
         
-        if ( nutzername.equals( "alice") == false ) {
+        final Optional<AutorEntity> autorOptional = _datenbank.getAutorByName( nutzername );
+        if ( autorOptional.isEmpty() ) {
             
-            throw new UsernameNotFoundException( "Nutzer \"" + nutzername + "\" gibt es nicht.");
+            throw new UsernameNotFoundException( "Nutzer \"" + nutzername + "\" nicht in DB gefunden.");
+        }
+
+        final AutorEntity autor = autorOptional.get();
+        
+        if ( autor.isIstAktiv() == false ) {
+            
+            final String fehlerNachricht = 
+                    String.format( "Nutzer \"%s\" auf Datenbank gefunden, ist aber inaktiv.", 
+                                    nutzername );
+            
+            LOG.warn( fehlerNachricht );
+            
+            throw new UsernameNotFoundException( fehlerNachricht );
         }
                 
-        final String passwortEncoded = _passwordEncoder.encode( "g3h3im");
+        final String passwortEncoded = _passwordEncoder.encode( autor.getPasswort() );
         
-        final UserDetails userDetails = User.withUsername( "alice" )
+        final UserDetails userDetails = User.withUsername( nutzername )
                                             .password( passwortEncoded )
                                             .roles( ROLLE_AUTOR )
                                             .build();
         
-        LOG.info( "Nutzerdetails geladen: {}", userDetails );
+        LOG.info( "Nutzer mit Name \"{}\" aus DB-Tabelle geladen.", nutzername );
         
         return userDetails;
     }

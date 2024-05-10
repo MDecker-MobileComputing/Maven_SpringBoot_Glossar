@@ -5,6 +5,7 @@ import static org.springframework.security.web.util.matcher.AntPathRequestMatche
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -21,18 +22,29 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class Sicherheitskonfiguration {
         
     private final static Logger LOG = LoggerFactory.getLogger( Sicherheitskonfiguration.class );
-    
-    /** Event-Handler, der ausgeführt wird, wenn ein Nutzer sich erfolgreich angemeldet hat. */
-    private final static NutzerAngemeldetHandler NUTZER_ANGEMELDET_HANDLER = new NutzerAngemeldetHandler();
-    
+        
     /** Array mit Pfaden, auf die auch ohne Authentifizierung zugegriffen werden kann. */
     private final static String[] OEFFENTLICHE_PFADE_ARRAY = { "/index.html"     , 
                                                                "/abgemeldet.html",
                                                                "/styles.css"     ,
                                                                "/h2-console/**"  ,
                                                                "/app/hauptseite" ,
-                                                               "/app/eintrag/**"
+                                                               "/app/eintrag/**"    
                                                              };
+    
+    /** Objekt mit Event-Handler-Methode, die ausgeführt wird, wenn ein Nutzer sich erfolgreich angemeldet hat. */
+    private final NutzerAngemeldetHandler _nutzerAngemeldetHandler;
+    
+    
+    /**
+     * Konstruktor für <i>Dependency Injection</i>.
+     */
+    @Autowired
+    public Sicherheitskonfiguration( NutzerAngemeldetHandler nutzerAngemeldetHandler ) {
+        
+        _nutzerAngemeldetHandler = nutzerAngemeldetHandler;
+    }
+    
     
     /**
      * Konfiguration Sicherheit für HTTP (formularbasierte Authentifizierung).
@@ -40,12 +52,12 @@ public class Sicherheitskonfiguration {
     @Bean
     public SecurityFilterChain httpKonfiguration( HttpSecurity http ) throws Exception {
 
-        AntPathRequestMatcher[] oeffentlichPfadMatcherArray = getMatcherFuerOeffentlichePfade();
+        final AntPathRequestMatcher[] oeffentlichPfadMatcherArray = getMatcherFuerOeffentlichePfade();
         
         return http.csrf( (csrf) -> csrf.disable() )
                    .authorizeHttpRequests( auth -> auth.requestMatchers( oeffentlichPfadMatcherArray ).permitAll()
                                                        .anyRequest().authenticated() )
-                   .formLogin( formLogin -> formLogin.successHandler( NUTZER_ANGEMELDET_HANDLER ) ) // im Handler wird auch Weiterleitung auf Hauptseite gemacht                                                      
+                   .formLogin( formLogin -> formLogin.successHandler( _nutzerAngemeldetHandler ) ) // im Handler wird auch Weiterleitung auf Hauptseite gemacht                                                      
                    .logout(logout -> logout
                                            .logoutUrl( "/logout" )
                                            .logoutSuccessUrl("/abgemeldet.html")
@@ -56,6 +68,12 @@ public class Sicherheitskonfiguration {
                    .build();
     }
     
+    
+    /**
+     * Erzeugt für öffentliche Pfade aus String-Array in einen Array von {@code AntPathRequestMatcher}-Objekten.
+     *   
+     * @return Array mit Matcher-Objekten für die öffentliche Pfade (Pfade, die ohne Authentifizierung aufgerufen werden können)
+     */
     private static AntPathRequestMatcher[] getMatcherFuerOeffentlichePfade() {
         
         final int anzahlOeffentlichePfade = OEFFENTLICHE_PFADE_ARRAY.length;

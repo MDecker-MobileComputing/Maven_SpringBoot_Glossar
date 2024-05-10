@@ -15,12 +15,13 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 
+
 /**
  * Repository-Bean, die alle Methoden für Zugriff auf Datenbank enthält.
  */
 @Repository
 public class Datenbank {
-    
+
     private final static Logger LOG = LoggerFactory.getLogger( Datenbank.class );
 
     /** Zentrale Objekt von JPA für Datenbankzugriffe. */
@@ -44,36 +45,36 @@ public class Datenbank {
      */
     public int getAnzahlGlossareintraege() {
 
-        final Query query = _em.createQuery( "SELECT COUNT(g) FROM GlossarEntity g" );
-        
+        final Query query = _em.createQuery( "SELECT COUNT(g) FROM GlossarEntity g" ); // Query mit JPQL
+
         final Long ergebnisLong = (long) query.getSingleResult();
-        
+
         final int ergebnisInt = ergebnisLong.intValue();
-        
+
         return ergebnisInt;
     }
-    
-    
+
+
     /**
      * Glossareintrag anhand ID auslesen (mit allen Attributen).
-     * 
+     *
      * @param id Primärschlüssel/ID von Glossareintrag
-     * 
+     *
      * @return Optional enthält Eintrag wenn gefunden
      */
     public Optional<GlossarEntity> getEintragById( Long id ) {
-    
+
         try {
-        
+
             final GlossarEntity ergebnis = _em.find( GlossarEntity.class, id );
             return Optional.ofNullable( ergebnis );
-            
+
         }
         catch ( IllegalArgumentException ex ) {
-         
+
             LOG.error( "Fehler bei Lesen von Glossareintrag anhand ID.", ex );
             return Optional.empty();
-        }        
+        }
     }
 
 
@@ -87,24 +88,24 @@ public class Datenbank {
         _em.persist( eintrag );
         LOG.info( "Neuer Glossareintrag in Datenbank gespeichert: {}", eintrag.getBegriff() );
     }
-        
-    
+
+
     /**
      * Liste aller Glossarbegriffe, aber nur ID und Begriff (nicht aber Erklärung und weitere Attribute)
      * sind gefüllt.
      * <br><br>
-     * 
+     *
      * Für diese Methode wird ein spezieller Konstruktor der Entity-Klasse {@link GlossarEntity} verwendet,
      * der nur die ID und den Begriff füllt.
-     * 
+     *
      * @return Liste aller Glossarbegriffe, alphabetisch sortiert; nur die Attribute ID und Begriff (Lemma)
      *         sind gefüllt.
      */
     public List<GlossarEntity> getGlossarBegriffe() {
-        
-        final String jpqlStr = 
+
+        final String jpqlStr =
                 """
-                SELECT new de.eldecker.dhbw.spring.glossar.db.entities.GlossarEntity( g._id, g._begriff ) 
+                SELECT new de.eldecker.dhbw.spring.glossar.db.entities.GlossarEntity( g._id, g._begriff )
                        FROM GlossarEntity g
                        ORDER BY g._begriff ASC
                 """;
@@ -113,11 +114,11 @@ public class Datenbank {
 
         return query.getResultList();
     }
-    
-    
+
+
     /**
      * Fügt neuen Autor (Nutzer) in die Datenbank ein.
-     * 
+     *
      * @param autor Neuer Autor/Nutzer
      */
     public void neuerAutor( AutorEntity autor ) {
@@ -125,5 +126,48 @@ public class Datenbank {
         _em.persist( autor );
         LOG.info( "Neuer Autor (Nutzer) in Datenbank gespeichert: {}", autor.getNutzername() );
     }
+
+
+    /**
+     * Autor/Nutzer anhand {@code nutzername} holen.
+     *
+     * @param nutzername Nutzername nach dem gesucht wird (case-sensitive!)
+     *
+     * @return Optional ist leer, wenn Nutzer nicht gefunden; sonst ist der Nutzer
+     *         mit allen Feldern enthalten.
+     */
+    public Optional<AutorEntity> getAutorByName( String nutzername ) {
+
+        final String jpqlStr = "SELECT a FROM AutorEntity a WHERE a._nutzername = :nutzername";
+        
+        final TypedQuery<AutorEntity> query = _em.createQuery( jpqlStr, AutorEntity.class );
+        query.setParameter( "nutzername", nutzername );
+
+        final List<AutorEntity> results = query.getResultList(); // eigentliche Query ausführen
+
+        if ( results.isEmpty() ) {
+
+            LOG.warn( "Kein Nutzer mit Nutzername '{}' gefunden.", nutzername );
+            return Optional.empty();
+
+        } else {
+
+            return Optional.of( results.get(0) );
+        }
+    }
     
+    
+    /**
+     * Objekt mit Autor/Nutzer auf DB aktualisieren.
+     * 
+     * @param autorNutzer Nutzer mit mind. einem neuen Attributwert (außer der ID), 
+     *                    ID muss gefüllt sein.  
+     * 
+     * @return Neuer Zustand des Objekts
+     */
+    public AutorEntity updateAutor( AutorEntity autorNutzer ) {
+    
+        return _em.merge( autorNutzer );
+    }
+         
 }
