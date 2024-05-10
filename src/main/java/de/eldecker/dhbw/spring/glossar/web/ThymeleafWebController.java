@@ -1,5 +1,7 @@
 package de.eldecker.dhbw.spring.glossar.web;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import de.eldecker.dhbw.spring.glossar.db.Datenbank;
+import de.eldecker.dhbw.spring.glossar.db.entities.GlossarEntity;
 
 
 /**
@@ -20,13 +23,13 @@ import de.eldecker.dhbw.spring.glossar.db.Datenbank;
 @RequestMapping( "/app" )
 public class ThymeleafWebController {
 
-    private Logger LOG = LoggerFactory.getLogger( ThymeleafWebController.class );
-    
-    /** Attribut für Template "hauptseite". */
-    private static final String ATTRIBUT_NAME_ANZAHL = "anzahl_eintraege";
-    
-    /** Attribut für Template "hauptseite"; ist leer, wenn kein Nutzer angemeldet. */
+    private static final Logger LOG = LoggerFactory.getLogger( ThymeleafWebController.class );
+        
+    /** Attribut-Key für Template "hauptseite"; referenziert leeren String, wenn kein Nutzer angemeldet. */
     private static final String ATTRIBUT_NUTZER = "nutzername";
+    
+    /** Attribut-Key für Template "hauptseite" mit Liste der Einträge. */
+    private static final String ATTRIBUT_BEGRIFF_LISTE = "begriffe";
     
     /** Repository-Bean für Zugriff auf Datenbank. */
     private final Datenbank _datenbank;
@@ -43,7 +46,7 @@ public class ThymeleafWebController {
     
     
     /**
-     * Übersichtsseite anzeigen. 
+     * Übersichtsseite mit Liste der Glossareinträge (aber ohne Erklärungen) anzeigen. 
      * 
      * @param authentication Objekt zur Abfrage, ob Nutzer authentifiziert ist;
      *                       ACHTUNG: ist {@code null} für unangemeldete Nutzer.
@@ -57,11 +60,7 @@ public class ThymeleafWebController {
     @GetMapping( "/hauptseite" )
     public String hauptseiteAnzeige( Authentication authentication,
                                      Model model ) {
-                
-        final long anzahl = _datenbank.getAnzahlGlossareintraege();        
-        model.addAttribute( ATTRIBUT_NAME_ANZAHL, anzahl );
-        
-        
+                        
         final boolean nutzerIstAngemeldet = authentication != null && 
                                             authentication.isAuthenticated();        
         if ( nutzerIstAngemeldet ) {
@@ -75,8 +74,10 @@ public class ThymeleafWebController {
             LOG.info( "Zugriff auf Hauptseite von unangemeldetem Nutzer." );
             model.addAttribute( ATTRIBUT_NUTZER, "" );
         }
-        
                 
+        final List<GlossarEntity> begriffListe = _datenbank.getGlossarBegriffe();
+        model.addAttribute( ATTRIBUT_BEGRIFF_LISTE, begriffListe );        
+                               
         return "hauptseite";
     }
     

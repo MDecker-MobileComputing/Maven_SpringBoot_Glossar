@@ -11,17 +11,17 @@
   <h1>Glossar: Überblick</h1>
 
   <p th:if="${nutzername != null and nutzername != ''}">
-    Angemeldet als Nutzer: 
-    <span th:text="${angemeldeter_nutzer}"></span>
+    Angemeldet als Nutzer:
+    <span th:text="${nutzername}"></span>
     ( <a href="/logout">Logout</a> )
   </p>
   <p th:unless="${nutzername != null and nutzername != ''}">
-    Sie sind nicht angemeldet.
-  </p>    
+    Sie sind nicht angemeldet ( <a href="/login">anmelden</a> ).
+  </p>
 
   <p>
-    Anzahl der Einträge im Glossar: 
-    <span th:text="${anzahl_eintraege}">
+    Anzahl der Einträge im Glossar:
+    <span th:text="${#lists.size(begriffe)}">
   </p>
 
 </body>

@@ -17,7 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 public class NutzerAngemeldetHandler implements AuthenticationSuccessHandler {
 
-    private Logger LOG = LoggerFactory.getLogger( NutzerAngemeldetHandler.class );
+    private static final Logger LOG = LoggerFactory.getLogger( NutzerAngemeldetHandler.class );
 
     
     /**

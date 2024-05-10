@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class MeinUserDetailsService implements UserDetailsService {
 
-    private Logger LOG = LoggerFactory.getLogger( MeinUserDetailsService.class );
+    private static final Logger LOG = LoggerFactory.getLogger( MeinUserDetailsService.class );
     
     /** Rolle für Nutzer, die Glossareinträge erstellen und ändern dürfen. */
     public static final String ROLLE_AUTOR = "autor";
@@ -48,10 +48,12 @@ public class MeinUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException( "Nutzer \"" + nutzername + "\" gibt es nicht.");
         }
                 
-        UserDetails userDetails = User.withUsername( "alice" )
-                   .password( _passwordEncoder.encode( "g3h3im") )
-                   .roles( ROLLE_AUTOR )
-                   .build();
+        final String passwortEncoded = _passwordEncoder.encode( "g3h3im");
+        
+        final UserDetails userDetails = User.withUsername( "alice" )
+                                            .password( passwortEncoded )
+                                            .roles( ROLLE_AUTOR )
+                                            .build();
         
         LOG.info( "Nutzerdetails geladen: {}", userDetails );
         

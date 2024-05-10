@@ -65,17 +65,19 @@ public class Datenbank {
      * Für diese Methode wird ein spezieller Konstruktor der Entity-Klasse {@link GlossarEntity} verwendet,
      * der nur die ID und den Begriff füllt.
      * 
-     * @return Liste aller Glossarbegriffe, alphabetisch sortiert.
+     * @return Liste aller Glossarbegriffe, alphabetisch sortiert; nur die Attribute ID und Begriff (Lemma)
+     *         sind gefüllt.
      */
     public List<GlossarEntity> getGlossarBegriffe() {
         
-        final String qlString = """
-                                   SELECT new de.eldecker.dhbw.spring.glossar.db.entities.GlossarEntity( g._id, g._begriff ) 
-                                          FROM GlossarEntity g
-                                          ORDER BY g._begriff ASC
-                                """;
+        final String jpqlStr = 
+                """
+                SELECT new de.eldecker.dhbw.spring.glossar.db.entities.GlossarEntity( g._id, g._begriff ) 
+                       FROM GlossarEntity g
+                       ORDER BY g._begriff ASC
+                """;
 
-        final TypedQuery<GlossarEntity> query = _em.createQuery( qlString, GlossarEntity.class );
+        final TypedQuery<GlossarEntity> query = _em.createQuery( jpqlStr, GlossarEntity.class );
 
         return query.getResultList();
     }    

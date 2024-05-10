@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class BeispielDatenImportRunner implements ApplicationRunner {
 
-    private Logger LOG = LoggerFactory.getLogger( BeispielDatenImportRunner.class );
+    private static final Logger LOG = LoggerFactory.getLogger( BeispielDatenImportRunner.class );
 
     /** Repository-Bean für Datenbankzugriff. */
     private Datenbank _datenbank;
