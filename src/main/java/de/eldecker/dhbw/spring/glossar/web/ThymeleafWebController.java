@@ -1,5 +1,7 @@
 package de.eldecker.dhbw.spring.glossar.web;
 
+import static java.lang.Long.parseLong;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -119,7 +121,7 @@ public class ThymeleafWebController {
                                    @PathVariable("id") String idStr ) {
         
         final boolean nutzerIstAngemeldet = authentication != null && 
-                      authentication.isAuthenticated();        
+                                            authentication.isAuthenticated();        
         if ( nutzerIstAngemeldet ) {
 
             final String nutzername = authentication.getName();
@@ -137,7 +139,7 @@ public class ThymeleafWebController {
         long idLong = -1;
         try {
             
-            idLong = Long.parseLong( idStr );
+            idLong = parseLong( idStr ); // throws NumberFormatException
             
             final Optional<GlossarEntity> entityOptional = _datenbank.getEintragById( idLong );
             if ( entityOptional.isPresent() ) {
