@@ -1,6 +1,7 @@
 package de.eldecker.dhbw.spring.glossar.web;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,16 @@ public class ThymeleafWebController {
     
     /** Attribut-Key für Template "hauptseite" mit Liste der Einträge. */
     private static final String ATTRIBUT_EINTRAEGE_LISTE = "eintraege";
+
+    /** Attribut-Key für Template "begriff" mit Begriff (Lemma) das erklärt werden soll. */
+    private static final String ATTRIBUT_BEGRIFF = "begriff";
+
+    
+    /** Attribut-Key für Template "eintrag" mit Erklärung zu einem Glossareintrag. */
+    private static final String ATTRIBUT_ERKLAERUNG = "erklaerung";
+    
+    /** Attribut-Key für Template "eintrag" mit Fehlermeldung. */
+    private static final String ATTRIBUT_FEHLERMELDUNG = "fehlermeldung";
     
     /** Repository-Bean für Zugriff auf Datenbank. */
     private final Datenbank _datenbank;
@@ -86,6 +97,7 @@ public class ThymeleafWebController {
                                
         return "hauptseite";
     }
+
     
     /**
      * Einzelnen Glossareintrag anzeigen.
@@ -104,24 +116,55 @@ public class ThymeleafWebController {
     @GetMapping( "/eintrag/{id}")
     public String eintragAnzeigen( Authentication authentication,
                                    Model model,
-                                   @PathVariable("id") String id ) {
+                                   @PathVariable("id") String idStr ) {
         
         final boolean nutzerIstAngemeldet = authentication != null && 
-                authentication.isAuthenticated();        
+                      authentication.isAuthenticated();        
         if ( nutzerIstAngemeldet ) {
 
             final String nutzername = authentication.getName();
-            LOG.info( "Zugriff auf Eintrag mit ID={} von Nutzer \"{}\".", id, nutzername );
+            LOG.info( "Zugriff auf Eintrag mit ID={} von Nutzer \"{}\".", idStr, nutzername );
             model.addAttribute( ATTRIBUT_NUTZER    , nutzername );
             model.addAttribute( ATTRIBUT_ANGEMELDET, true       );
 
         } else {
 
-            LOG.info( "Zugriff auf Eintrag mit ID={} von anonymen Nutzer.", id );
+            LOG.info( "Zugriff auf Eintrag mit ID={} von anonymen Nutzer.", idStr );
             model.addAttribute( ATTRIBUT_NUTZER    , ""    );
             model.addAttribute( ATTRIBUT_ANGEMELDET, false );
         }
+        
+        long idLong = -1;
+        try {
+            
+            idLong = Long.parseLong( idStr );
+            
+            final Optional<GlossarEntity> entityOptional = _datenbank.getEintragById( idLong );
+            if ( entityOptional.isPresent() ) {
                 
+                final GlossarEntity entity = entityOptional.get(); 
+
+                model.addAttribute( ATTRIBUT_BEGRIFF   , entity.getBegriff()    );
+                model.addAttribute( ATTRIBUT_ERKLAERUNG, entity.getErklaerung() );
+                
+                LOG.info( "Glossareintrag {} aufgelöst: {}", idLong, entity.getBegriff() );
+                
+            } else {
+
+                model.addAttribute( ATTRIBUT_BEGRIFF   , "???" );
+                model.addAttribute( ATTRIBUT_ERKLAERUNG, ""    );
+                
+                model.addAttribute( ATTRIBUT_FEHLERMELDUNG, "Kein Eintrag mit ID=" + idLong + " gefunden." );
+                LOG.error( "Kein Glossareintrag mit ID={} gefunden.", idLong );            
+            }                   
+            
+        } catch ( NumberFormatException ex ) {
+            
+            model.addAttribute( ATTRIBUT_BEGRIFF      , "???" );
+            model.addAttribute( ATTRIBUT_FEHLERMELDUNG, "ID \"" + idStr + "\" übergeben, ist kein gültiger long-Wert." );                    
+            LOG.error( "Pfadparameter für ID \"{}\" konnte nicht nach long geparst werden.", idStr, ex);        
+        }                          
+        
         return "eintrag";
     }
     

@@ -3,7 +3,10 @@ package de.eldecker.dhbw.spring.glossar.db;
 import de.eldecker.dhbw.spring.glossar.db.entities.GlossarEntity;
 
 import java.util.List;
+import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -11,9 +14,13 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 
-
+/**
+ * Repository-Bean, die alle Methoden für Zugriff auf Datenbank enthält.
+ */
 @Repository
 public class Datenbank {
+    
+    private final static Logger LOG = LoggerFactory.getLogger( Datenbank.class );
 
     /** Zentrale Objekt von JPA für Datenbankzugriffe. */
     private EntityManager _em;
@@ -43,6 +50,29 @@ public class Datenbank {
         final int ergebnisInt = ergebnisLong.intValue();
         
         return ergebnisInt;
+    }
+    
+    
+    /**
+     * Glossareintrag anhand ID auslesen (mit allen Attributen).
+     * 
+     * @param id Primärschlüssel/ID von Glossareintrag
+     * 
+     * @return Optional enthält Eintrag wenn gefunden
+     */
+    public Optional<GlossarEntity> getEintragById( Long id ) {
+    
+        try {
+        
+            GlossarEntity ergebnis = _em.find( GlossarEntity.class, id );
+            return Optional.ofNullable( ergebnis );
+            
+        }
+        catch ( IllegalArgumentException ex ) {
+         
+            LOG.error( "Fehler bei Lesen von Glossareintrag anhand ID.", ex );
+            return Optional.empty();
+        }        
     }
 
 

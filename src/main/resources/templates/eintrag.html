@@ -1,14 +1,27 @@
 <!DOCTYPE html>
 <html lang="de" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Eintrag: </title>
+    <title>Eintrag: <span th:text="${begriff}"></span></title>
     <meta charset="utf-8" >
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="../../styles.css">
 </head>
 <body>
 
-  <h1>Eintrag: </h1>
+  <h1>
+    Eintrag: <span th:text="${begriff}"></span>
+  </h1>
+
+  <p th:if="${fehlermeldung != null and #strings.length(fehlermeldung) > 0}">
+    Fehlermeldung:
+    <span th:text="${fehlermeldung}"></span>
+  </p>
+
+  <p>
+    <span th:text="${erklaerung}"></span>
+  </p>
+
+  <br>
 
   <a href="../hauptseite">Zurück zur Hauptliste</a>
 
