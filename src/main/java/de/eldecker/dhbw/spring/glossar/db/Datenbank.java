@@ -1,5 +1,6 @@
 package de.eldecker.dhbw.spring.glossar.db;
 
+import de.eldecker.dhbw.spring.glossar.db.entities.AutorEntity;
 import de.eldecker.dhbw.spring.glossar.db.entities.GlossarEntity;
 
 import java.util.List;
@@ -64,7 +65,7 @@ public class Datenbank {
     
         try {
         
-            GlossarEntity ergebnis = _em.find( GlossarEntity.class, id );
+            final GlossarEntity ergebnis = _em.find( GlossarEntity.class, id );
             return Optional.ofNullable( ergebnis );
             
         }
@@ -79,13 +80,14 @@ public class Datenbank {
     /**
      * Fügt einen neuen Glossareintrag in die Datenbank ein.
      *
-     * @param eintrag Der neue Glossareintrag.
+     * @param eintrag Neuer Glossareintrag
      */
     public void neuerGlossarEintrag( GlossarEntity eintrag ) {
 
         _em.persist( eintrag );
+        LOG.info( "Neuer Glossareintrag in Datenbank gespeichert: {}", eintrag.getBegriff() );
     }
-    
+        
     
     /**
      * Liste aller Glossarbegriffe, aber nur ID und Begriff (nicht aber Erklärung und weitere Attribute)
@@ -110,6 +112,18 @@ public class Datenbank {
         final TypedQuery<GlossarEntity> query = _em.createQuery( jpqlStr, GlossarEntity.class );
 
         return query.getResultList();
-    }    
+    }
+    
+    
+    /**
+     * Fügt neuen Autor (Nutzer) in die Datenbank ein.
+     * 
+     * @param autor Neuer Autor/Nutzer
+     */
+    public void neuerAutor( AutorEntity autor ) {
 
+        _em.persist( autor );
+        LOG.info( "Neuer Autor (Nutzer) in Datenbank gespeichert: {}", autor.getNutzername() );
+    }
+    
 }

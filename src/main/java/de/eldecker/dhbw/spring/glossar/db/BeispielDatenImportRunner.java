@@ -1,7 +1,10 @@
 package de.eldecker.dhbw.spring.glossar.db;
 
+import static de.eldecker.dhbw.spring.glossar.db.entities.AutorEntity.NIE_ANGEMELDET_DATUM;
+
 import static java.time.LocalDateTime.now;
 
+import de.eldecker.dhbw.spring.glossar.db.entities.AutorEntity;
 import de.eldecker.dhbw.spring.glossar.db.entities.GlossarEntity;
 
 import java.time.LocalDateTime;
@@ -56,19 +59,23 @@ public class BeispielDatenImportRunner implements ApplicationRunner {
             
         } else {
 
+            // Glossareinträge auf DB schreiben
             final LocalDateTime jetzt = now();
 
-            final GlossarEntity[] eintraege = {
-                                                 new GlossarEntity( "Maven"  , "Build-Management-Tool für Java-Projekte."           , jetzt ),
-                                                 new GlossarEntity( "Phase"  , "Ein Maven-Lifecycle besteht aus mehreren Phasen."   , jetzt ),
-                                                 new GlossarEntity( "pom.xml", "Zentrale Konfigurationsdatei für ein Maven-Projekt.", jetzt )
-                                              };
-
-            for ( GlossarEntity eintrag : eintraege ) {
-
-                _datenbank.neuerGlossarEintrag( eintrag );
-                LOG.info( "Beispieldatensatz eingefügt: {}", eintrag );
-            }            
+            final GlossarEntity ge1 = new GlossarEntity( "Maven"  , "Build-Management-Tool für Java-Projekte."           , jetzt );
+            final GlossarEntity ge2 = new GlossarEntity( "Phase"  , "Ein Maven-Lifecycle besteht aus mehreren Phasen."   , jetzt );
+            final GlossarEntity ge3 = new GlossarEntity( "pom.xml", "Zentrale Konfigurationsdatei für ein Maven-Projekt.", jetzt );
+            
+            _datenbank.neuerGlossarEintrag( ge1 );
+            _datenbank.neuerGlossarEintrag( ge2 );
+            _datenbank.neuerGlossarEintrag( ge3 );
+            
+            // Autoren(Nutzer) auf DB schreiben
+            final AutorEntity autor1 = new AutorEntity( "alice", "g3h3im", true, NIE_ANGEMELDET_DATUM );
+            final AutorEntity autor2 = new AutorEntity( "bob"  , "s3cr3t", true, NIE_ANGEMELDET_DATUM );
+            
+            _datenbank.neuerAutor( autor1 );             
+            _datenbank.neuerAutor( autor2 );            
         }
     }
 
