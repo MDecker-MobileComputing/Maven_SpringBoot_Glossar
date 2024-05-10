@@ -1,8 +1,12 @@
 package de.eldecker.dhbw.spring.glossar.db;
 
+import static java.time.LocalDateTime.now;
+import static java.time.temporal.ChronoUnit.MINUTES;
+
 import de.eldecker.dhbw.spring.glossar.db.entities.AutorEntity;
 import de.eldecker.dhbw.spring.glossar.db.entities.GlossarEntity;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +18,10 @@ import org.springframework.stereotype.Repository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
 
 /**
@@ -169,5 +177,39 @@ public class Datenbank {
     
         return _em.merge( autorNutzer );
     }
+    
+    
+    /**
+     * Gibt Autoren zurück, für die {@code ist_active=true} gilt, deren
+     * letzte Anmeldung aber schon mehr als {@code anzahlMinuten}
+     * zurückliegt.  Diese Autoren sollten aus Sicherheitsgründen
+     * deaktiviert werden.
+     * 
+     * @param anzahlMinuten Anzahl der Minuten, die der Autor inaktiv 
+     *                      gewesen sein muss 
+     * 
+     * @return Liste der inaktiven Autoren; kann leer sein, ist aber nicht
+     *         {@code null}
+     */
+    public List<AutorEntity> getInaktiveAutoren( int anzahlMinuten ) {
+        
+        final LocalDateTime zeitSchwellwert = now().minus( anzahlMinuten, MINUTES );                                                           
+        
+        final CriteriaBuilder            cBuilder = _em.getCriteriaBuilder();
+        final CriteriaQuery<AutorEntity> cQuery   = cBuilder.createQuery( AutorEntity.class );
+        
+        final Root<AutorEntity> rootAutor = cQuery.from( AutorEntity.class );
+        
+        final Predicate predikatIstAktiv        = cBuilder.isTrue(   rootAutor.get( "_istAktiv"        ) );
+        final Predicate predikatLetzteAnmeldung = cBuilder.lessThan( rootAutor.get( "_letzteAnmeldung" ), 
+                                                                     zeitSchwellwert );
+        
+        final Predicate predikatKombiniert = cBuilder.and( predikatIstAktiv, predikatLetzteAnmeldung );
+        cQuery.select( rootAutor ).where( predikatKombiniert );
+        
+        final TypedQuery<AutorEntity> query = _em.createQuery( cQuery ); 
+        
+        return query.getResultList();
+    }    
          
 }

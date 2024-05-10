@@ -21,8 +21,21 @@
     <span th:text="${fehlermeldung}"></span>
   </p>
 
+  <div>
+    <label for="eingabe_begriff" class="fett">Begriff:</label>
+    <br><br>
+    <input type="text" id="eingabe_begriff" name="begriff">
+
+    <br><br>
+
+    <label for="eingabe_erklaerung" class="fett">Erklärung:</label>
+    <br><br>
+    <textarea id="eingabe_erklaerung" name="erklärung" rows="10">
+    </textarea>
+  </div>
+
   <br>
 
-  <a href="/app/hauptseite">Zurück zur Hauptliste</a>
+  <a href="/app/hauptseite">Abbrechen</a>
 
 </body>

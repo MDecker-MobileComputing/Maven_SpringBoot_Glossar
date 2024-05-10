@@ -27,3 +27,17 @@ ul li {
 .abstand_unten {
     margin-bottom: 2.5em;
 }
+
+textarea, input[type="text"] {
+    width: 100%;
+    margin-bottom: 1.5em
+}
+@media (min-width: 800px) {
+    textarea, input[type="text"] {
+        width: 50%;
+    }
+}
+
+#eingabe_begriff, #eingabe_erklaerung {
+    font-size: 20px;
+}
