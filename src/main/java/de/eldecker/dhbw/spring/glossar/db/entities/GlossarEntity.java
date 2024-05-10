@@ -45,7 +45,7 @@ public class GlossarEntity {
      * Wenn Eintrag nur erzeugt aber noch nicht geändert wurde, dann muss der Änderungszeitpunkt dem
      * Erzeugungszeitpunkt entsprechen. 
      */
-    @Column(name = "zeitpunkt")
+    @Column(name = "zeitpunkt_aenderung")
     private LocalDateTime _zeitpunktAenderung;
 
 

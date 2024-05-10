@@ -56,6 +56,16 @@ function onSpeichernButton() {
             return response.text() ;
         }
     })
+    .then( data => {
+
+        console.log( "Erfolg:", data );
+        window.location.href = "hauptseite";
+    })
+    .catch( (fehler) => {
+
+        console.error( "Fehler bei HTTP-POST-Request mit Glossareintrag:", fehler );
+        alert( "Fehler beim Speichern: " + fehler );
+    });
 
     return false;
 }
