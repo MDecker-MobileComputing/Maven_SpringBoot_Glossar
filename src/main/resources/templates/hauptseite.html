@@ -21,7 +21,11 @@
 
   <br>
 
-  <h2>Einträge ( <span th:text="${#lists.size(eintraege)}"></span> ) </h2>
+  <h2>
+    Einträge
+    ( <span th:text="${#lists.size(eintraege)}"></span> )
+  </h2>
+
   <ul>
     <li th:each="eintrag : ${eintraege}"><!-- über alle einträge iterieren -->
       <a th:href="@{/app/eintrag/{id}(id=${eintrag.id})}">

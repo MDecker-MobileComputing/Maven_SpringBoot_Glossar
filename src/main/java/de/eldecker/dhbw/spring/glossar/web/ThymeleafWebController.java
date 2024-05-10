@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import de.eldecker.dhbw.spring.glossar.db.Datenbank;
@@ -61,8 +62,8 @@ public class ThymeleafWebController {
      *         werden soll; wird in Ordner {@code src/main/resources/templates/} gesucht.
      */
     @GetMapping( "/hauptseite" )
-    public String hauptseiteAnzeige( Authentication authentication,
-                                     Model model ) {
+    public String hauptseiteAnzeigen( Authentication authentication,
+                                      Model model ) {
                         
         final boolean nutzerIstAngemeldet = authentication != null && 
                                             authentication.isAuthenticated();        
@@ -84,6 +85,44 @@ public class ThymeleafWebController {
         model.addAttribute( ATTRIBUT_EINTRAEGE_LISTE, begriffListe );        
                                
         return "hauptseite";
+    }
+    
+    /**
+     * Einzelnen Glossareintrag anzeigen.
+     * 
+     * @param authentication Objekt zur Abfrage, ob Nutzer authentifiziert ist;
+     *                       ACHTUNG: ist {@code null} für unangemeldete Nutzer.
+     *                       
+     * @param model Objekt, in das die Werte für die Platzhalter in der Template-Datei
+     *              geschrieben werden. 
+     *              
+     * @param id ID (Nummer) des Glossareintrags
+     * 
+     * @return Name (ohne Suffix) der Template-Datei {@code eintrag.html}, die angezeigt
+     *         werden soll; wird in Ordner {@code src/main/resources/templates/} gesucht.
+     */
+    @GetMapping( "/eintrag/{id}")
+    public String eintragAnzeigen( Authentication authentication,
+                                   Model model,
+                                   @PathVariable("id") String id ) {
+        
+        final boolean nutzerIstAngemeldet = authentication != null && 
+                authentication.isAuthenticated();        
+        if ( nutzerIstAngemeldet ) {
+
+            final String nutzername = authentication.getName();
+            LOG.info( "Zugriff auf Eintrag mit ID={} von Nutzer \"{}\".", id, nutzername );
+            model.addAttribute( ATTRIBUT_NUTZER    , nutzername );
+            model.addAttribute( ATTRIBUT_ANGEMELDET, true       );
+
+        } else {
+
+            LOG.info( "Zugriff auf Eintrag mit ID={} von anonymen Nutzer.", id );
+            model.addAttribute( ATTRIBUT_NUTZER    , ""    );
+            model.addAttribute( ATTRIBUT_ANGEMELDET, false );
+        }
+                
+        return "eintrag";
     }
     
 }
