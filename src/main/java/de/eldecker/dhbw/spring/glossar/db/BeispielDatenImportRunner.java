@@ -55,28 +55,46 @@ public class BeispielDatenImportRunner implements ApplicationRunner {
 
         if ( anzahlEintraege > 0 ) {
 
-            LOG.info( "Beispiel-Daten werden nicht geladen, da bereits Einträge vorhanden sind." );            
+            LOG.info( "Beispiel-Daten werden nicht in DB geschrieben, da bereits Einträge vorhanden sind." );            
             
-        } else {
+        } else { // Beispieldatensätze in DB schreiben
 
-            // Glossareinträge auf DB schreiben
-            final LocalDateTime jetzt = now();
+            glossarEintraegeErzeugen();
 
-            final GlossarEntity ge1 = new GlossarEntity( "Maven"  , "Build-Management-Tool für Java-Projekte."           , jetzt );
-            final GlossarEntity ge2 = new GlossarEntity( "Phase"  , "Ein Maven-Lifecycle besteht aus mehreren Phasen."   , jetzt );
-            final GlossarEntity ge3 = new GlossarEntity( "pom.xml", "Zentrale Konfigurationsdatei für ein Maven-Projekt.", jetzt );
+            autorenNutzerErzeugen();                        
             
-            _datenbank.neuerGlossarEintrag( ge1 );
-            _datenbank.neuerGlossarEintrag( ge2 );
-            _datenbank.neuerGlossarEintrag( ge3 );
-            
-            // Autoren(Nutzer) auf DB schreiben
-            final AutorEntity autor1 = new AutorEntity( "alice", "g3h3im", true, NIE_ANGEMELDET_DATUM );
-            final AutorEntity autor2 = new AutorEntity( "bob"  , "s3cr3t", true, NIE_ANGEMELDET_DATUM );
-            
-            _datenbank.neuerAutor( autor1 );             
-            _datenbank.neuerAutor( autor2 );            
+            LOG.info( "Beispiel-Daten wurden in DB geschrieben." );
         }
+    }
+
+    
+    /**
+     * Einige Glossareinträge als Beispieldatensätze in DB schreiben.
+     */
+    private void glossarEintraegeErzeugen() {
+        
+        final LocalDateTime jetzt = now();
+
+        final GlossarEntity ge1 = new GlossarEntity( "Maven"  , "Build-Management-Tool für Java-Projekte."           , jetzt );
+        final GlossarEntity ge2 = new GlossarEntity( "Phase"  , "Ein Maven-Lifecycle besteht aus mehreren Phasen."   , jetzt );
+        final GlossarEntity ge3 = new GlossarEntity( "pom.xml", "Zentrale Konfigurationsdatei für ein Maven-Projekt.", jetzt );
+        
+        _datenbank.neuerGlossarEintrag( ge1 );
+        _datenbank.neuerGlossarEintrag( ge2 );
+        _datenbank.neuerGlossarEintrag( ge3 );
+    }
+    
+    
+    /**
+     * Einige Autoren/Nutzer als Beispieldatensätze in DB schreiben.
+     */    
+    private void autorenNutzerErzeugen() {
+
+        final AutorEntity autor1 = new AutorEntity( "alice", "g3h3im", true, NIE_ANGEMELDET_DATUM );
+        final AutorEntity autor2 = new AutorEntity( "bob"  , "s3cr3t", true, NIE_ANGEMELDET_DATUM );
+        
+        _datenbank.neuerAutor( autor1 );             
+        _datenbank.neuerAutor( autor2 );            
     }
 
 }
