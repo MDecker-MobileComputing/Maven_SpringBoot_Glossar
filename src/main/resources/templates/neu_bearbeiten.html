@@ -30,12 +30,20 @@
 
     <label for="eingabe_erklaerung" class="fett">Erklärung:</label>
     <br><br>
-    <textarea id="eingabe_erklaerung" name="erklärung" rows="10">
-    </textarea>
+    <textarea id="eingabe_erklaerung" name="erklaerung" rows="10"></textarea>
+
   </div>
 
   <br>
 
-  <a href="/app/hauptseite">Abbrechen</a>
+  <div>
+    <a href="#" onclick="return onSpeichernButton();">Speichern</a>
+    &nbsp;
+    <a href="/app/hauptseite">Abbrechen</a>
+  </div>
+
+
+  <!-- Erst JavaScript-Datei laden, wenn DOM-Baum geladen ist. -->
+  <script src="../../neuAendern.js"></script>
 
 </body>
