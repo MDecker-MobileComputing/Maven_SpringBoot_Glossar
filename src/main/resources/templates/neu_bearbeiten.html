@@ -1,24 +1,19 @@
 <!DOCTYPE html>
 <html lang="de" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title th:text="'Eintrag im Glossar: ' + ${begriff}"></title>
+  <title th:text="${seitentitel}"></title>
   <meta charset="utf-8" >
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" type="text/css" href="../../styles.css">
 </head>
 <body>
 
-  <h1>
-    Eintrag im Glossar: <span th:text="${begriff}"></span>
-  </h1>
+  <h1 th:text="${seitentitel}"></h1>
 
   <p th:if="${ist_angemeldet}">
     Angemeldet als Nutzer:
     <span th:text="${nutzername}"></span>
     ( <a href="/logout">Logout</a> )
-  </p>
-  <p th:unless="${ist_angemeldet}" class="abstand_unten">
-    Sie sind nicht angemeldet ( <a href="/login">anmelden</a> ).
   </p>
 
   <p th:if="${fehlermeldung != null and #strings.length(fehlermeldung) > 0}">
@@ -28,20 +23,6 @@
 
   <br>
 
-  <p>
-    <span th:text="${erklaerung}"></span>
-  </p>
-
-  <br>
-
-
-  <p th:if="${ist_angemeldet}">
-    <a th:href="@{/app/bearbeiten/{id}(id=${eintrag_id})}">Eintrag bearbeiten</a>
-  </p>
-
-  <br>
-
-  <a href="../hauptseite">Zurück zur Hauptliste</a>
+  <a href="/app/hauptseite">Zurück zur Hauptliste</a>
 
 </body>
-</html>

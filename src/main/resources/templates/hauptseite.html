@@ -21,13 +21,17 @@
 
   <br>
 
+  <div th:if="${ist_angemeldet}" class="abstand_unten">
+    <a  href="/app/neu">Neuen Eintrag im Glossar anlegen</a>
+  </div>
+
   <h2>
     Einträge
     ( <span th:text="${#lists.size(eintraege)}"></span> )
   </h2>
 
   <ul>
-    <li th:each="eintrag : ${eintraege}"><!-- über alle einträge iterieren -->
+    <li th:each="eintrag : ${eintraege}"><!-- über alle Einträge iterieren -->
       <a th:href="@{/app/eintrag/{id}(id=${eintrag.id})}">
         <span th:text="${eintrag.begriff}"></span>
       </a>

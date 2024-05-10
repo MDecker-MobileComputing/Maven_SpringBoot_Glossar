@@ -6,6 +6,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * Einstiegspunkt der Web-App.
+ * <br><br>
+ * 
+ * Diese Klasse kann in Eclipse im Debug-Modus gestartet werden. 
  */
 @SpringBootApplication
 public class GlossarApplication {
