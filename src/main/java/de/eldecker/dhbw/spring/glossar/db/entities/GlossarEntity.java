@@ -40,6 +40,14 @@ public class GlossarEntity {
     @Column(name = "zeitpunkt_erzeugung")
     private LocalDateTime _zeitpunktErzeugung;
 
+    /** 
+     * Zeitpunkt (Datum + Uhrzeit) der letzten Änderung; darf nie vor Zeitpunkt der Erzeugung liegen.
+     * Wenn Eintrag nur erzeugt aber noch nicht geändert wurde, dann muss der Änderungszeitpunkt dem
+     * Erzeugungszeitpunkt entsprechen. 
+     */
+    @Column(name = "zeitpunkt")
+    private LocalDateTime _zeitpunktAenderung;
+
 
     /**
      * Default-Konstruktor, wird von JPA benötigt.
@@ -62,7 +70,7 @@ public class GlossarEntity {
      */
     public GlossarEntity(Long id, String begriff) {
                 
-        this( begriff, "", null );
+        this( begriff, "", null, null );
         _id = id;
     }    
 
@@ -71,11 +79,15 @@ public class GlossarEntity {
      * Konstruktor, mit dem alle Attribute außer der ID gesetzt
      * werden können.
      */
-    public GlossarEntity( String begriff, String erklaerung, LocalDateTime zeitpunktErzeugung ) {
+    public GlossarEntity( String begriff, 
+                          String erklaerung, 
+                          LocalDateTime zeitpunktErzeugung,
+                          LocalDateTime zeitpunktAenderung ) {
 
         _begriff            = begriff;
         _erklaerung         = erklaerung;
         _zeitpunktErzeugung = zeitpunktErzeugung;
+        _zeitpunktAenderung = zeitpunktAenderung;
     }
 
 
@@ -149,11 +161,38 @@ public class GlossarEntity {
     /**
      * Setter für Zeitpunkt, zu dem der Eintrag angelegt wurde.
      * 
-     * @param zeitpunkt @return Datum+Zeit, zu der Eintrag angelegt wurde
+     * @param zeitpunkt Datum+Zeit, zu der Eintrag angelegt wurde
      */
     public void setZeitpunktErzeugung( LocalDateTime zeitpunkt ) {
 
         _zeitpunktErzeugung = zeitpunkt;
+    }
+    
+
+    /**
+     * Getter für Zeitpunkt (Datum+Uhrzeit) der letzten Änderung.
+     * 
+     * @return Zeitpunkt der letzten Änderung
+     */
+    public LocalDateTime getZeitpunktAenderung() {
+        
+        return _zeitpunktAenderung;
+    }
+
+
+    /**
+     * Setter für Zeitpunkt (Datum+Uhrzeit) der letzten Änderung.
+     * <br><br>
+     * 
+     * Darf nie vor Zeitpunkt der Erzeugung liegen; Zeitpunkt der letzten
+     * Änderungen wenn noch nie eine Änderung stattgefunden hat ist der
+     * Zeitpunkt der Erzeugung.
+     * 
+     * @param zeitpunktAenderung Zeitpunkt der letzten Änderung
+     */
+    public void setZeitpunktAenderung( LocalDateTime zeitpunktAenderung ) {
+        
+        _zeitpunktAenderung = zeitpunktAenderung;
     }
 
 
@@ -177,7 +216,10 @@ public class GlossarEntity {
     @Override
     public int hashCode() {
         
-        return Objects.hash( _begriff, _erklaerung, _zeitpunktErzeugung );
+        return Objects.hash( _begriff, 
+                             _erklaerung, 
+                             _zeitpunktErzeugung, 
+                             _zeitpunktAenderung );
     }
 
 
@@ -206,7 +248,8 @@ public class GlossarEntity {
         
         return Objects.equals( _begriff           , other._begriff            ) && 
                Objects.equals( _erklaerung        , other._erklaerung         ) &&
-               Objects.equals( _zeitpunktErzeugung, other._zeitpunktErzeugung );
+               Objects.equals( _zeitpunktErzeugung, other._zeitpunktErzeugung ) &&
+               Objects.equals( _zeitpunktAenderung, other._zeitpunktAenderung );
     }
 
 }

@@ -108,7 +108,7 @@ public class ThymeleafWebController {
      * @param model Objekt, in das die Werte für die Platzhalter in der Template-Datei
      *              geschrieben werden. 
      *              
-     * @param id ID (Nummer) des Glossareintrags
+     * @param idStr ID (Nummer) des Glossareintrags als String, sollte sich nach long parsen lassen
      * 
      * @return Name (ohne Suffix) der Template-Datei {@code eintrag.html}, die angezeigt
      *         werden soll; wird in Ordner {@code src/main/resources/templates/} gesucht.

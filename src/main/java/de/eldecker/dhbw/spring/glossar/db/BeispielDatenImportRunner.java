@@ -75,9 +75,9 @@ public class BeispielDatenImportRunner implements ApplicationRunner {
         
         final LocalDateTime jetzt = now();
 
-        final GlossarEntity ge1 = new GlossarEntity( "Maven"  , "Build-Management-Tool für Java-Projekte."           , jetzt );
-        final GlossarEntity ge2 = new GlossarEntity( "Phase"  , "Ein Maven-Lifecycle besteht aus mehreren Phasen."   , jetzt );
-        final GlossarEntity ge3 = new GlossarEntity( "pom.xml", "Zentrale Konfigurationsdatei für ein Maven-Projekt.", jetzt );
+        final GlossarEntity ge1 = new GlossarEntity( "Maven"  , "Build-Management-Tool für Java-Projekte."           , jetzt, jetzt );
+        final GlossarEntity ge2 = new GlossarEntity( "Phase"  , "Ein Maven-Lifecycle besteht aus mehreren Phasen."   , jetzt, jetzt );
+        final GlossarEntity ge3 = new GlossarEntity( "pom.xml", "Zentrale Konfigurationsdatei für ein Maven-Projekt.", jetzt, jetzt );
         
         _datenbank.neuerGlossarEintrag( ge1 );
         _datenbank.neuerGlossarEintrag( ge2 );
@@ -90,11 +90,13 @@ public class BeispielDatenImportRunner implements ApplicationRunner {
      */    
     private void autorenNutzerErzeugen() {
 
-        final AutorEntity autor1 = new AutorEntity( "alice", "g3h3im", true, NIE_ANGEMELDET_DATUM );
-        final AutorEntity autor2 = new AutorEntity( "bob"  , "s3cr3t", true, NIE_ANGEMELDET_DATUM );
+        final AutorEntity autor1 = new AutorEntity( "alice" , "g3h3im", true , NIE_ANGEMELDET_DATUM );
+        final AutorEntity autor2 = new AutorEntity( "bob"   , "s3cr3t", true , NIE_ANGEMELDET_DATUM );
+        final AutorEntity autor3 = new AutorEntity( "claire", "foobar", false, NIE_ANGEMELDET_DATUM ); // inaktiver Nutzer!
         
         _datenbank.neuerAutor( autor1 );             
-        _datenbank.neuerAutor( autor2 );            
+        _datenbank.neuerAutor( autor2 );
+        _datenbank.neuerAutor( autor3 );
     }
 
 }

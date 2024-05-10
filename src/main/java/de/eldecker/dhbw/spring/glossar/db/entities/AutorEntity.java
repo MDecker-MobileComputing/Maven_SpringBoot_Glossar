@@ -161,6 +161,8 @@ public class AutorEntity {
     /**
      * Getter für Zeitpunkt (Datum+Uhrzeit) der letzten Anmeldung des Nutzers;
      * wenn Datum im Jahr 1970 liegt, dann hat sich der Nutzer noch nie angemeldet.
+     * Wenn dieser Zeitpunkt zu lange in der Vergangenheit liegt, dann kann der
+     * Nutzer automatisch auf inaktiv gesetzt werden. 
      * 
      * @return Zeitpunkt (Datum+Uhrzeit) der letzten Anmeldung
      */
@@ -175,7 +177,7 @@ public class AutorEntity {
      * wenn der Nutzer sich noch nie angemeldet hat, dann auf
      * {@link #NIE_ANGEMELDET_DATUM} (Datum im Jahr 1970) setzen.
      * 
-     * @return Zeitpunkt (Datum+Uhrzeit) der letzten Anmeldung
+     * @param letzteAnmeldung Zeitpunkt (Datum+Uhrzeit) der letzten Anmeldung
      */    
     public void setLetzteAnmeldung( LocalDateTime letzteAnmeldung ) {
         
