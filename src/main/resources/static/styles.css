@@ -23,3 +23,7 @@ ul li {
 .kursiv {
     font-style: italic;
 }
+
+.abstand_unten {
+    margin-bottom: 1.5em;
+}

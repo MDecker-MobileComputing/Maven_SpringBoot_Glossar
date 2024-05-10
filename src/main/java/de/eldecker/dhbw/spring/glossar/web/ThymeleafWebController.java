@@ -25,11 +25,14 @@ public class ThymeleafWebController {
 
     private static final Logger LOG = LoggerFactory.getLogger( ThymeleafWebController.class );
         
+    /** Attribut-Key für bool'schen Wert, der gdw. {@code true} ist, wenn der Nutzer angemeldet. */
+    private static final String ATTRIBUT_ANGEMELDET = "ist_angemeldet";
+    
     /** Attribut-Key für Template "hauptseite"; referenziert leeren String, wenn kein Nutzer angemeldet. */
     private static final String ATTRIBUT_NUTZER = "nutzername";
     
     /** Attribut-Key für Template "hauptseite" mit Liste der Einträge. */
-    private static final String ATTRIBUT_BEGRIFF_LISTE = "begriffe";
+    private static final String ATTRIBUT_EINTRAEGE_LISTE = "eintraege";
     
     /** Repository-Bean für Zugriff auf Datenbank. */
     private final Datenbank _datenbank;
@@ -67,16 +70,18 @@ public class ThymeleafWebController {
             
             final String nutzername = authentication.getName();
             LOG.info( "Zugriff auf Hauptseite von Nutzer \"{}\".", nutzername );
-            model.addAttribute( ATTRIBUT_NUTZER, nutzername );
+            model.addAttribute( ATTRIBUT_NUTZER    , nutzername );
+            model.addAttribute( ATTRIBUT_ANGEMELDET, true       );
             
         } else {
         
             LOG.info( "Zugriff auf Hauptseite von unangemeldetem Nutzer." );
-            model.addAttribute( ATTRIBUT_NUTZER, "" );
+            model.addAttribute( ATTRIBUT_NUTZER    , ""    );
+            model.addAttribute( ATTRIBUT_ANGEMELDET, false );
         }
                 
         final List<GlossarEntity> begriffListe = _datenbank.getGlossarBegriffe();
-        model.addAttribute( ATTRIBUT_BEGRIFF_LISTE, begriffListe );        
+        model.addAttribute( ATTRIBUT_EINTRAEGE_LISTE, begriffListe );        
                                
         return "hauptseite";
     }

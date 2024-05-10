@@ -26,11 +26,12 @@ public class Sicherheitskonfiguration {
     private final static NutzerAngemeldetHandler NUTZER_ANGEMELDET_HANDLER = new NutzerAngemeldetHandler();
     
     /** Array mit Pfaden, auf die auch ohne Authentifizierung zugegriffen werden kann. */
-    private final static String[] OEFFENTLICHE_PFADE_ARRAY = { "/index.html", 
+    private final static String[] OEFFENTLICHE_PFADE_ARRAY = { "/index.html"     , 
                                                                "/abgemeldet.html",
-                                                               "/styles.css",
-                                                               "/h2-console/**",
-                                                               "/app/hauptseite"                                                               
+                                                               "/styles.css"     ,
+                                                               "/h2-console/**"  ,
+                                                               "/app/hauptseite" ,
+                                                               "/app/eintrag/**"
                                                              };
     
     /**
