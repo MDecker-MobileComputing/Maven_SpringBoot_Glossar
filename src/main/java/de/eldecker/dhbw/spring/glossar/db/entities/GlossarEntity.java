@@ -9,6 +9,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 
 
@@ -16,7 +17,9 @@ import jakarta.persistence.Table;
  * Ein Objekt dieser Klasse repräsentiert einen Glossareintrag in der zugehörigen DB-Tabelle.
  */
 @Entity
-@Table(name = "GLOSSAR_EINTRAEGE")
+@Table(name = "GLOSSAR_EINTRAEGE",
+         indexes = { @Index( name = "idx_begriff", columnList = "begriff" ) }
+)
 public class GlossarEntity {
 
     /**
@@ -28,7 +31,10 @@ public class GlossarEntity {
     @Column(name = "id")
     private Long _id;
 
-    /** Begriff, den der Glossareintrag erklärt. */
+    /**
+     * Begriff, den der Glossareintrag erklärt.
+     * Für diese Spalte wird explizit ein Index definiert, siehe Annotation an der Klasse.
+     */
     @Column(name = "begriff")
     private String _begriff;
 

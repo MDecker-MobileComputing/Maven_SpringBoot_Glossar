@@ -12,6 +12,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 
 
@@ -20,7 +21,9 @@ import jakarta.persistence.Table;
  * und ändern kann.
  */
 @Entity
-@Table(name = "AUTOREN")
+@Table(name = "AUTOREN",
+         indexes = { @Index( name = "idx_nutzername", columnList = "nutzername" ) }
+)
 public class AutorEntity {
 
     /** Dummy-Datum/Zeit am 1.1.1970 als Wert für "Nie angemeldet". */
@@ -35,7 +38,11 @@ public class AutorEntity {
     @Column(name = "id")
     private Long _id;
 
-    /** Nutzername des Autors (mit der sich anmeldet). */
+    /**
+     * Nutzername des Autors (mit der sich anmeldet).
+     * <br><br>
+     * Für diese Spalte wird explizit ein Index definiert, siehe Annotation an der Klasse.
+     */
     @Column(name = "nutzername")
     private String _nutzername;
 
@@ -47,8 +54,8 @@ public class AutorEntity {
     @Column(name = "ist_aktiv")
     private boolean _istAktiv;
 
-    /** 
-     * Zeitpunkt (Datum+Uhrzeit) der letzten Anmeldung; wenn der Wert im Jahr 1970 liegt, dann 
+    /**
+     * Zeitpunkt (Datum+Uhrzeit) der letzten Anmeldung; wenn der Wert im Jahr 1970 liegt, dann
      * gab es noch nie eine Anmeldung.
      */
     @Column(name = "letzte_anmeldung")
@@ -114,7 +121,7 @@ public class AutorEntity {
      * Getter für Passwort.
      * <br>
      * <b>Passwort darf im Produktivbetrieb nie im Klartext gespeichert werden!</b>
-     * 
+     *
      * @return Passwort für Nutzer
      */
     public String getPasswort() {
@@ -125,7 +132,7 @@ public class AutorEntity {
 
     /**
      * Setter für Passwort
-     * 
+     *
      * @param passwort Passwort im Klartext (im Produktivbetrieb ist das nicht erlaubt!)
      */
     public void setPasswort( String passwort ) {
@@ -157,34 +164,34 @@ public class AutorEntity {
         _istAktiv = istAktiv;
     }
 
-        
+
     /**
      * Getter für Zeitpunkt (Datum+Uhrzeit) der letzten Anmeldung des Nutzers;
      * wenn Datum im Jahr 1970 liegt, dann hat sich der Nutzer noch nie angemeldet.
      * Wenn dieser Zeitpunkt zu lange in der Vergangenheit liegt, dann kann der
-     * Nutzer automatisch auf inaktiv gesetzt werden. 
-     * 
+     * Nutzer automatisch auf inaktiv gesetzt werden.
+     *
      * @return Zeitpunkt (Datum+Uhrzeit) der letzten Anmeldung
      */
     public LocalDateTime getLetzteAnmeldung() {
-        
+
         return _letzteAnmeldung;
     }
 
-    
+
     /**
      * Getter für Zeitpunkt (Datum+Uhrzeit) der letzten Anmeldung des Nutzers;
      * wenn der Nutzer sich noch nie angemeldet hat, dann auf
      * {@link #NIE_ANGEMELDET_DATUM} (Datum im Jahr 1970) setzen.
-     * 
+     *
      * @param letzteAnmeldung Zeitpunkt (Datum+Uhrzeit) der letzten Anmeldung
-     */    
+     */
     public void setLetzteAnmeldung( LocalDateTime letzteAnmeldung ) {
-        
+
         _letzteAnmeldung = letzteAnmeldung;
     }
 
-    
+
     /**
      * Liefert String-Repräsentation des Objekts zurück.
      *
