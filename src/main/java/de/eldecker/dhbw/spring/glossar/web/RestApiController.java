@@ -12,7 +12,6 @@ import java.util.Optional;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.slf4j.Logger;
@@ -39,8 +38,8 @@ public class RestApiController {
 
     private static Logger LOG = LoggerFactory.getLogger( RestApiController.class );
 
-    /** Target object for deserialization of payload received via HTTP-POST. */
-    public record Payload( String begriff, String erklaerung ) {}
+    /** Zielklasse für Deserialisierung der über HTTP-POST-Request empfangenen Payload. */
+    public record Payload( long id, String begriff, String erklaerung ) { }
 
     /** Repository-Bean für Zugriff auf Datenbank. */
     private final Datenbank _datenbank;

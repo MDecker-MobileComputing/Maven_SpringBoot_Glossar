@@ -16,7 +16,6 @@ import jakarta.persistence.Table;
 
 /**
  * Ein Objekt dieser Klasse repräsentiert einen Glossareintrag in der zugehörigen DB-Tabelle.
-
  */
 @Entity
 @Table(name = "GLOSSAR_EINTRAEGE",

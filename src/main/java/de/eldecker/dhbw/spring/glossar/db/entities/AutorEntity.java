@@ -106,6 +106,7 @@ public class AutorEntity {
         return _nutzername;
     }
 
+    
     /**
      * Setter für Anmeldename des Nutzers
      *
