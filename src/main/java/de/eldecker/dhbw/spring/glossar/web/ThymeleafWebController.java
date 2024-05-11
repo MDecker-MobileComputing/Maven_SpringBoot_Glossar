@@ -22,7 +22,8 @@ import de.eldecker.dhbw.spring.glossar.db.entities.GlossarEntity;
 /**
  * Controller (kein RestController!), der die Anfragen für die Thymeleaf-Views bearbeitet.
  * Alle Pfade beginnen mit {@code /app/}.
- * Die Methoden geben immer den Name der darzustellenden Template-Datei zurück.
+ * Die Methoden geben immer den Namen (ohne Datei-Endung) der darzustellenden Template-Datei
+ * zurück, der im Ordner {@code src/main/resources/templates/} gesucht wird.
  */
 @Controller
 @RequestMapping( "/app" )
@@ -44,13 +45,13 @@ public class ThymeleafWebController {
 
     /** Attribut-Key für Template "eintrag" mit Erklärung zu einem Glossareintrag. */
     private static final String ATTRIBUT_ERKLAERUNG = "erklaerung";
-    
+
     /** Attribut-Key für Template "eintrag" mit ID von gerade angezeigtem Glossareintrag. */
     private static final String ATTRIBUT_ID = "eintrag_id";
 
     /** Attribut-Key für Template "eintrag" und "bearbeiten" mit Fehlermeldung. */
     private static final String ATTRIBUT_FEHLERMELDUNG = "fehlermeldung";
-    
+
     /** Attribut-Key für Template "neu_bearbeiten" mit Seitentitel. */
     private static final String ATTRIBUT_SEITENTITEL = "seitentitel";
 
@@ -77,8 +78,7 @@ public class ThymeleafWebController {
      * @param model Objekt, in das die Werte für die Platzhalter in der Template-Datei
      *              geschrieben werden.
      *
-     * @return Name (ohne Suffix) der Template-Datei {@code hauptseite.html}, die angezeigt
-     *         werden soll; wird in Ordner {@code src/main/resources/templates/} gesucht.
+     * @return "hauptseite" (Name von Template-Datei ohne Datei-Endung)
      */
     @GetMapping( "/hauptseite" )
     public String hauptseiteAnzeigen( Authentication authentication,
@@ -116,11 +116,10 @@ public class ThymeleafWebController {
      * @param model Objekt, in das die Werte für die Platzhalter in der Template-Datei
      *              geschrieben werden.
      *
-     * @param idStr ID (Nummer) des Glossareintrags als String, sollte sich nach {@code long} 
+     * @param idStr ID (Nummer) des Glossareintrags als String, sollte sich nach {@code long}
      *              parsen lassen
      *
-     * @return Name (ohne Suffix) der Template-Datei {@code eintrag.html}, die angezeigt
-     *         werden soll; wird in Ordner {@code src/main/resources/templates/} gesucht.
+     * @return "eintrag" (Name von Template-Datei ohne Datei-Endung)
      */
     @GetMapping( "/eintrag/{id}")
     public String eintragAnzeigen( Authentication authentication,
@@ -177,8 +176,8 @@ public class ThymeleafWebController {
 
         return "eintrag";
     }
-    
-    
+
+
     /**
      * Neuen Glossareintrag anlegen; nur für authentifzierte Nutzer!
      *
@@ -188,29 +187,30 @@ public class ThymeleafWebController {
      * @param model Objekt, in das die Werte für die Platzhalter in der Template-Datei
      *              geschrieben werden.
      *
-     * @return Name (ohne Suffix) der Template-Datei {@code neu_bearbeiten.html}, die angezeigt
-     *         werden soll; wird in Ordner {@code src/main/resources/templates/} gesucht.
-     */        
+     * @return "neu_bearbeiten" (Name von Template-Datei ohne Datei-Endung)
+     *         oder "hauptseite" wenn Nutzer nicht angemeldet ist.
+     */
     @GetMapping( "/neu" )
-    public String eintragErzeugen( Authentication authentication, 
+    public String eintragErzeugen( Authentication authentication,
                                    Model model ) {
-        
+
         model.addAttribute( ATTRIBUT_SEITENTITEL, "Neuen Eintrag im Glossar anlegen" );
-        
+
         if ( authentication == null || !authentication.isAuthenticated() ) {
 
-            LOG.warn( "Unangemeldeter Nutzer hat Seite für neuen Glossareintrag aufgerufen." ); 
+            // Dieses Fall sollte nicht aufreten, da /neu durch Security-Konfiguration
+            // nur für authentifizierte Nutzer erreichbar ist.
+
+            LOG.warn( "Unangemeldeter Nutzer hat Seite für neuen Glossareintrag aufgerufen." );
             model.addAttribute( ATTRIBUT_FEHLERMELDUNG, "Sie sind nicht berechtigt neue Einträge anzulegen." );
-            
-        } else {
-            
-            
+
+            return "hauptseite";
         }
-        
+
         return "neu_bearbeiten";
     }
-    
-    
+
+
     /**
      * Einzelnen Glossareintrag bearbeiten; nur für authentifizierte Nutzer!
      *
@@ -220,31 +220,31 @@ public class ThymeleafWebController {
      * @param model Objekt, in das die Werte für die Platzhalter in der Template-Datei
      *              geschrieben werden.
      *
-     * @param idStr ID (Nummer) des Glossareintrags als String, sollte sich nach {@code long} 
+     * @param idStr ID (Nummer) des Glossareintrags als String, sollte sich nach {@code long}
      *        parsen lassen
      *
      * @return Name (ohne Suffix) der Template-Datei {@code bearbeiten.html}, die angezeigt
      *         werden soll; wird in Ordner {@code src/main/resources/templates/} gesucht.
-     */    
+     */
     @GetMapping( "/bearbeiten/{id}")
     public String eintragBearbeiten( Authentication authentication,
                                      Model model,
                                      @PathVariable("id") String idStr ) {
-        
+
         model.addAttribute( ATTRIBUT_SEITENTITEL, "Eintrag im Glossar bearbeiten" );
-        
+
         if ( authentication == null || !authentication.isAuthenticated() ) {
 
-            LOG.warn( "Unangemeldeter Nutzer hat Seite zum Bearbeiten von Glossareintrag mit ID \"{}\" aufgerufen.", 
+            LOG.warn( "Unangemeldeter Nutzer hat Seite zum Bearbeiten von Glossareintrag mit ID \"{}\" aufgerufen.",
                       idStr );
-            
+
             model.addAttribute( ATTRIBUT_FEHLERMELDUNG, "Sie sind nicht berechtigt Einträge zu bearbeiten." );
-            
+
         } else {
-            
+
             // ...
         }
-        
+
         return "neu_bearbeiten";
     }
 
