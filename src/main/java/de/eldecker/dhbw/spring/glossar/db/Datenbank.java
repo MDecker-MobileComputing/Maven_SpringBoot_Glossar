@@ -89,13 +89,13 @@ public class Datenbank {
     /**
      * Glossareintrag anhand Begriff auslesen (mit allen Attributen).
      *
-     * @param begriff Begriff nach dem gesucht wird
+     * @param begriff Begriff nach dem (case-insensitive) gesucht wird
      *
      * @return Optional enthält Eintrag (mit allen Attributen gefüllt) wenn gefunden
      */
     public Optional<GlossarEntity> getEintragByBegriff( String begriff ) {
 
-        final String jpqlStr = "SELECT g FROM GlossarEntity g WHERE g._begriff = :begriff";
+        final String jpqlStr = "SELECT g FROM GlossarEntity g WHERE LOWER(g._begriff) = LOWER(:begriff)";
 
         final TypedQuery<GlossarEntity> query = _em.createQuery( jpqlStr, GlossarEntity.class );
         query.setParameter( "begriff", begriff );
