@@ -17,7 +17,7 @@
   </p>
 
   <p th:if="${fehlermeldung != null and #strings.length(fehlermeldung) > 0}">
-    Fehlermeldung:
+    <span class="fett">Fehlermeldung:</span>
     <span th:text="${fehlermeldung}"></span>
   </p>
 
@@ -32,8 +32,8 @@
     <br><br>
     <textarea id="eingabe_erklaerung" name="erklaerung" rows="10"></textarea>
 
-    <!-- Unsichtbares Element, ist nur für Änderunge gefüllt -->
-    <input type="hidden" id="eintrag_id" name="eintrag_id" value="${eintrag_id}">
+    <!-- Unsichtbares Element, ist nur für Änderungen gefüllt -->
+    <input type="hidden" id="eintrag_id" name="eintrag_id" th:value="${eintrag_id}">
   </div>
 
   <br>

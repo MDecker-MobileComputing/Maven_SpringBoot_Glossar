@@ -23,7 +23,13 @@ import de.eldecker.dhbw.spring.glossar.db.entities.GlossarEntity;
  * Controller (kein RestController!), der die Anfragen für die Thymeleaf-Views bearbeitet.
  * Alle Pfade beginnen mit {@code /app/}.
  * Die Mapping-Methoden geben immer den Namen (ohne Datei-Endung) der darzustellenden Template-Datei
- * zurück, der im Ordner {@code src/main/resources/templates/} gesucht wird.
+ * zurück, der im Ordner {@code src/main/resources/templates/} gesucht wird. 
+ * Neben Mapping-Methoden enthält die Klasse aber auch noch Hilfsmethoden, die von mehreren
+ * Mapping-Methoden aufgerufen werden.
+ * <br><br>
+ * 
+ * Einige der Attribut-Keys (Konstanten {@code ATTRIBUT_...}) werden in mehreren Templates
+ * verwendet.
  */
 @Controller
 @RequestMapping( "/app" )
@@ -44,29 +50,30 @@ public class ThymeleafWebController {
      */
     private static final String ATTRIBUT_NUTZER = "nutzername";
 
-    /** Attribut-Key für Template "hauptseite" mit Liste der Einträge. */
+    /** Attribut-Key für Platzhalter in Template, der die Liste der Einträge enthält. */
     private static final String ATTRIBUT_EINTRAEGE_LISTE = "eintraege";
 
-    /** Attribut-Key für Template "begriff" mit Begriff (Lemma) das erklärt werden soll. */
+    /** Attribut-Key für Platzhalter in Template, der den Glossarbegriff (Lemma) enthält.  */ 
     private static final String ATTRIBUT_BEGRIFF = "begriff";
 
-    /** Attribut-Key für Template "eintrag" mit Erklärung zu einem Glossareintrag. */
+    /** Attribut-Key für Platzhalter in Template, der die Erklärung für einen Glossarbegriff enthält.  */
     private static final String ATTRIBUT_ERKLAERUNG = "erklaerung";
 
-    /** Attribut-Key für Template "eintrag" mit Zeitpunkt, wann der Eintrag angelegt wurde. */
+    /** Attribut-Key für Platzhalter in Template, der den Zeitpunkt der Erzeugung des Eintrags enthält. */
     private static final String ATTRIBUT_ZEITPUNKT_ANGELEGT = "zeitpunkt_angelegt";
 
-    /** Attribut-Key für Template "eintrag" mit Zeitpunkt, wann der Eintrag zuletzt geändert wurde. */
+    /** Attribut-Key für Platzhalter in Template, der den Zeitpunkt der letzten Änderung eines Eintrags enthält. */
     private static final String ATTRIBUT_ZEITPUNKT_GEAENDERT = "zeitpunkt_geaendert";
 
-    /** Attribut-Key für Template "eintrag" mit ID von gerade angezeigtem Glossareintrag. */
+    /** Attribut-Key für Platzhalter in Template, der die ID des Eintrags enthält. */
     private static final String ATTRIBUT_ID = "eintrag_id";
 
-    /** Attribut-Key für Template "eintrag" und "bearbeiten" mit Fehlermeldung. */
+    /** Attribut-Key für Platzhalter in Template, der ggf. eine Fehlermeldung enthält. */
     private static final String ATTRIBUT_FEHLERMELDUNG = "fehlermeldung";
 
-    /** Attribut-Key für Template "neu_bearbeiten" mit Seitentitel. */
+    /** Attribut-Key für Platzhalter in Template, der einen dynamisch erzeugten Seitentitel enthält. */
     private static final String ATTRIBUT_SEITENTITEL = "seitentitel";
+    
 
     /** Repository-Bean für Zugriff auf Datenbank. */
     private final Datenbank _datenbank;
@@ -127,7 +134,15 @@ public class ThymeleafWebController {
 
         authentifzierungAufloesen( authentication, model );
 
-        long idLong = -1;
+        final Optional<Long> idOptional = parseID( idStr );
+        if ( idOptional.isEmpty() ) {
+            
+            model.addAttribute( ATTRIBUT_FEHLERMELDUNG, "Seite mit ungültigem String \"" + idStr +                      
+                                                        "\"für Pfadparameter für ID aufgerufen." );
+            return "eintrag";
+        }
+        
+        long idLong = idOptional.get();
         try {
 
             idLong = parseLong( idStr ); // throws NumberFormatException
@@ -171,7 +186,7 @@ public class ThymeleafWebController {
 
         return "eintrag";
     }
-
+        
 
     /**
      * Neuen Glossareintrag anlegen; nur für authentifzierte Nutzer!
@@ -213,7 +228,7 @@ public class ThymeleafWebController {
      *              geschrieben werden.
      *
      * @param idStr ID (Nummer) des Glossareintrags als String, sollte sich nach {@code long}
-     *        parsen lassen
+     *              parsen lassen
      *
      * @return Name (ohne Suffix) der Template-Datei {@code bearbeiten.html}, die angezeigt
      *         werden soll; wird in Ordner {@code src/main/resources/templates/} gesucht.
@@ -223,6 +238,15 @@ public class ThymeleafWebController {
                                      Model model,
                                      @PathVariable("id") String idStr ) {
 
+        final Optional<Long> idOptional = parseID( idStr );
+        if ( idOptional.isEmpty() ) {
+            
+            model.addAttribute( ATTRIBUT_FEHLERMELDUNG, 
+                                "Seite mit ungültigem String \"" + idStr + 
+                                "\"für Pfadparameter für ID aufgerufen." );
+            return "eintrag";
+        }               
+        
         final boolean istNutzerAngemeldet = authentifzierungAufloesen ( authentication, model );
         if ( istNutzerAngemeldet == false) {
             
@@ -232,6 +256,7 @@ public class ThymeleafWebController {
         }
                 
         model.addAttribute( ATTRIBUT_SEITENTITEL, "Eintrag im Glossar bearbeiten" );
+        model.addAttribute( ATTRIBUT_ID         , idStr                           );
 
         return "neu_bearbeiten";
     }
@@ -277,6 +302,32 @@ public class ThymeleafWebController {
         }          
         
         return nutzerIstAngemeldet;
+    }
+    
+    
+    /**
+     * <b>Hilfsmethode:</b>
+     * Parsen von String der als Pfadparameter übergeben wurde und die ID (Long-Zahl) eines
+     * Glossareintrags enthalten sollte.
+     * 
+     * @param idString String, der als URL-Parameter für die ID eines Eintrags übergeben wurde
+     * 
+     * @return Optional enthält die ID als Long-Objekt wenn Sie geparst werden konnte
+     */
+    private Optional<Long> parseID( String idString ) {
+        
+        try {
+        
+            long idLong = parseLong( idString );
+            
+            return Optional.of( idLong );
+        }
+        catch ( NumberFormatException ex ) {
+            
+            LOG.error( "Als Pfadparameter für ID übergebener String ist keine gültige Long-Zahl: {}", 
+                       idString );
+            return Optional.empty();
+        }        
     }    
     
 }
