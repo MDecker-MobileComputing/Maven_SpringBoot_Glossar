@@ -135,16 +135,8 @@ public class ThymeleafWebController {
                                    @PathVariable("id") String idStr ) {
 
         authentifzierungAufloesen( authentication, model );
-
-        final Optional<Long> idOptional = parseID( idStr );
-        if ( idOptional.isEmpty() ) {
-            
-            return "eintrag";
-        }
         
-        long id = idOptional.get();
-        
-        holeEntityFuerID( id, model );
+        holeEntityFuerID( idStr, model );
 
         return "eintrag";
     }
@@ -199,26 +191,7 @@ public class ThymeleafWebController {
     public String eintragBearbeiten( Authentication authentication,
                                      Model model,
                                      @PathVariable("id") String idStr ) {
-
-        final Optional<Long> idOptional = parseID( idStr );
-        if ( idOptional.isEmpty() ) {
-            
-            model.addAttribute( ATTRIBUT_FEHLERMELDUNG, 
-                                "Seite mit ungültigem String \"" + idStr + 
-                                "\"für Pfadparameter für ID aufgerufen." );
-            return "eintrag";
-        }               
-        
-        final long idLong = idOptional.get();
-        
-        final boolean eintragGefunden = holeEntityFuerID( idLong, model );
-        if ( eintragGefunden == false ) {
-            
-            // ATTRIBUT_FEHLERMELDUNG wurde in holeEntityFuerID() gesetzt
-            return "eintrag";
-        }
-        
-        
+                       
         final boolean istNutzerAngemeldet = authentifzierungAufloesen ( authentication, model );
         if ( istNutzerAngemeldet == false) {
             
@@ -226,9 +199,10 @@ public class ThymeleafWebController {
             LOG.warn( "Unangemeldeter Nutzer hat Pfad /bearbeiten aufgerufen." );            
             return "fehler";
         }
-                
+               
+        holeEntityFuerID( idStr, model );
+        
         model.addAttribute( ATTRIBUT_SEITENTITEL, "Eintrag im Glossar bearbeiten" );
-        model.addAttribute( ATTRIBUT_ID         , idStr                           );
 
         return "neu_bearbeiten";
     }
@@ -275,36 +249,10 @@ public class ThymeleafWebController {
         
         return nutzerIstAngemeldet;
     }
-    
-    
-    /**
-     * <b>Hilfsmethode:</b>
-     * Parsen von String der als Pfadparameter übergeben wurde und die ID (Long-Zahl) eines
-     * Glossareintrags enthalten sollte.
-     * 
-     * @param idString String, der als URL-Parameter für die ID eines Eintrags übergeben wurde
-     * 
-     * @return Optional enthält die ID als Long-Objekt wenn Sie geparst werden konnte
-     */
-    private Optional<Long> parseID( String idString ) {
-        
-        try {
-        
-            long idLong = parseLong( idString );
-            
-            return Optional.of( idLong );
-        }
-        catch ( NumberFormatException ex ) {
-                                    
-            LOG.error( "Als Pfadparameter für ID übergebener String ist keine gültige Long-Zahl: {}", 
-                       idString );
-            return Optional.empty();
-        }        
-    }
-    
+
     
     /**
-     * Glossareintrag anhand ID von Datenbank holen und Attribute mit zugehörigen    
+     * Glossareintrag anhand ID (als String übergeben) von Datenbank holen und Attribute mit zugehörigen    
      * Werten in {@code mode} setzen.
      * <br><br>
      * 
@@ -318,13 +266,14 @@ public class ThymeleafWebController {
      * <li>{@link #ATTRIBUT_FEHLERMELDUNG}</li>
      * </ul>
      * Für alle Keys wird zumindest ein leerer String gesetzt.
-     * Wenn kein Glossareintrag mit {@code id} gefunden wurde, dann werden die Attribute mit Begriff, Erklärung und 
-     * den Zeitpunkten mit einem leeren String gefüllt, dafür wird die Fehlermeldung gefüllt. 
+     * Wenn sich {@code idString} nicht nach {@code long} parsen lässt oder kein Glossareintrag mit dieser ID gefunden wurde, 
+     * dann werden die Attribute mit Begriff, Erklärung und den Zeitpunkten mit einem leeren String gefüllt, dafür wird die  
+     * Fehlermeldung gefüllt.
      * Das Attribut für den Änderungszeitpunkt wird nur dann mit einen Zeitpunkt gefüllt, wenn dieser Zeitpunkt vom 
      * nicht dem Erzeugungszeitpunkt entspricht; wenn die beiden Zeitpunkte gleich sind, dann wird als Änderungszeitpunkt 
      * ein leerer String gesetzt.   
      * 
-     * @param id ID des Glossareintrags
+     * @param idString ID des Glossareintrags als String (sollte sich nach {@code long} parsen lassen, sonst Fehler)
      * 
      * @param model In diesem Argument gesetzte Key-Value-Paare sind wegen "Call By Reference" für den Aufrufer sichtbar;
      *              siehe Beschreibung für Methode für die gesetzten Attribute.              
@@ -332,9 +281,31 @@ public class ThymeleafWebController {
      * @return {@code true} gdw. ein Glossareintrag mit {@code id} gefunden wurde und
      *         die entsprechenden Key-Value-Paare in {@code model} geschrieben wurden.
      */
-    private boolean holeEntityFuerID( long id, Model model ) {
+    private boolean holeEntityFuerID( String idString, Model model ) {
         
-        final Optional<GlossarEntity> entityOptional = _datenbank.getEintragById( id );
+        long idLong = -1;
+        try {
+            
+            idLong = parseLong( idString );
+        }
+        catch ( NumberFormatException ex ) {
+                                    
+            model.addAttribute( ATTRIBUT_BEGRIFF            , "" );
+            model.addAttribute( ATTRIBUT_ERKLAERUNG         , "" );
+            model.addAttribute( ATTRIBUT_ZEITPUNKT_ANGELEGT , "" );
+            model.addAttribute( ATTRIBUT_ZEITPUNKT_GEAENDERT, "" );
+            model.addAttribute( ATTRIBUT_ID                 , "" );
+            
+            final String fehlerText = 
+                    format( "Ungültige ID als Pfadparameter übergeben: \"%s\"", idString );                                                                 
+            
+            model.addAttribute( ATTRIBUT_FEHLERMELDUNG, fehlerText );
+            LOG.error( fehlerText );
+            
+            return false;
+         }                
+        
+        final Optional<GlossarEntity> entityOptional = _datenbank.getEintragById( idLong );
         if ( entityOptional.isEmpty() ) {
             
             model.addAttribute( ATTRIBUT_BEGRIFF            , "" );
@@ -344,9 +315,8 @@ public class ThymeleafWebController {
             model.addAttribute( ATTRIBUT_ID                 , "" );
             
             final String fehlerText = 
-                    format( "Kein Glossareintrag mit ID=%d (Pfadparameter) gefunden.", id );                          
-                                       
-            
+                    format( "Kein Glossareintrag mit ID=%d (Pfadparameter) gefunden.", idLong );                          
+                                                   
             model.addAttribute( ATTRIBUT_FEHLERMELDUNG, fehlerText );
             LOG.error( fehlerText );
             
@@ -356,11 +326,11 @@ public class ThymeleafWebController {
         final GlossarEntity glossarEintrag = entityOptional.get();
         
         LOG.info( "Glossareintrag für ID={} (Pfadparameter) gefunden: \"{}\"", 
-                  id, glossarEintrag.getBegriff() );
+                  idLong, glossarEintrag.getBegriff() );
        
         model.addAttribute( ATTRIBUT_FEHLERMELDUNG, "" );
 
-        model.addAttribute( ATTRIBUT_ID                 , id                             );
+        model.addAttribute( ATTRIBUT_ID                 , idLong                         );
         model.addAttribute( ATTRIBUT_BEGRIFF            , glossarEintrag.getBegriff()    );
         model.addAttribute( ATTRIBUT_ERKLAERUNG         , glossarEintrag.getErklaerung() );
         
