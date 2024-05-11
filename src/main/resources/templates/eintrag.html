@@ -42,8 +42,8 @@
         &nbsp;
         <span th:text="${zeitpunkt_angelegt}"></span>
     </p>
-    <p>
-        <span class="fett">Geändert am:</span>
+    <p th:if="${zeitpunkt_geaendert != null and #strings.length(zeitpunkt_geaendert) > 0}">
+        <span class="fett">Letzte Änderung:</span>
         &nbsp;
         <span th:text="${zeitpunkt_geaendert}"></span>
     </p>

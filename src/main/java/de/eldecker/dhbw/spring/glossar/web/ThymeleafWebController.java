@@ -162,7 +162,15 @@ public class ThymeleafWebController {
                 model.addAttribute( ATTRIBUT_ERKLAERUNG         , entity.getErklaerung()         );
                 model.addAttribute( ATTRIBUT_ID                 , entity.getId()                 );
                 model.addAttribute( ATTRIBUT_ZEITPUNKT_ANGELEGT , entity.getZeitpunktErzeugung() );
-                model.addAttribute( ATTRIBUT_ZEITPUNKT_GEAENDERT, entity.getZeitpunktAenderung() );
+
+                if ( entity.getZeitpunktAenderung().isEqual( entity.getZeitpunktErzeugung() ) ) {
+
+                    model.addAttribute( ATTRIBUT_ZEITPUNKT_GEAENDERT, "" );
+
+                } else {
+
+                    model.addAttribute( ATTRIBUT_ZEITPUNKT_GEAENDERT, entity.getZeitpunktAenderung() );
+                }
 
                 LOG.info( "Glossareintrag {} aufgelöst: {}", idLong, entity.getBegriff() );
 
