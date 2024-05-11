@@ -79,6 +79,9 @@ public class ThymeleafWebController {
     /** Attribut-Key für Platzhalter in Template, das den Namen der Autors, der den Eintrag erstmals angelegt hat, enthält. */
     private static final String ATTRIBUT_AUTOR_ERZEUGUNG = "autor_erzeugung";
     
+    /** Attribut-Key für Platzhalter in Template, das den Namen der Autors, der die letzten Änderung vorgenommen hat, enthält. */
+    private static final String ATTRIBUT_AUTOR_AENDERUNG = "autor_aenderung";
+    
 
     /** Repository-Bean für Zugriff auf Datenbank. */
     private final Datenbank _datenbank;
@@ -299,6 +302,7 @@ public class ThymeleafWebController {
             model.addAttribute( ATTRIBUT_ZEITPUNKT_GEAENDERT, "" );
             model.addAttribute( ATTRIBUT_ID                 , "" );
             model.addAttribute( ATTRIBUT_AUTOR_ERZEUGUNG    , "" );
+            model.addAttribute( ATTRIBUT_AUTOR_AENDERUNG    , "" );
             
             final String fehlerText = 
                     format( "Ungültige ID als Pfadparameter übergeben: \"%s\"", idString );                                                                 
@@ -318,6 +322,7 @@ public class ThymeleafWebController {
             model.addAttribute( ATTRIBUT_ZEITPUNKT_GEAENDERT, "" );
             model.addAttribute( ATTRIBUT_ID                 , "" );
             model.addAttribute( ATTRIBUT_AUTOR_ERZEUGUNG    , "" );
+            model.addAttribute( ATTRIBUT_AUTOR_AENDERUNG    , "" );
             
             final String fehlerText = 
                     format( "Kein Glossareintrag mit ID=%d (Pfadparameter) gefunden.", idLong );                          
@@ -339,7 +344,8 @@ public class ThymeleafWebController {
         model.addAttribute( ATTRIBUT_BEGRIFF            , glossarEintrag.getBegriff()    );
         model.addAttribute( ATTRIBUT_ERKLAERUNG         , glossarEintrag.getErklaerung() );
         
-        model.addAttribute( ATTRIBUT_AUTOR_ERZEUGUNG    , glossarEintrag.getAutorErzeugung().getNutzername() );
+        model.addAttribute( ATTRIBUT_AUTOR_ERZEUGUNG, glossarEintrag.getAutorErzeugung().getNutzername() );
+        model.addAttribute( ATTRIBUT_AUTOR_AENDERUNG, glossarEintrag.getAutorAenderung().getNutzername() );
         
         final LocalDateTime zeitpunktAngelegt  = glossarEintrag.getZeitpunktErzeugung();
         final LocalDateTime zeitpunktAenderung = glossarEintrag.getZeitpunktAenderung();

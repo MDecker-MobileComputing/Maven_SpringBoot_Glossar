@@ -67,8 +67,6 @@ public class BeispielDatenImportRunner implements ApplicationRunner {
                                                 
             LOG.info( "Beispiel-Daten wurden in DB geschrieben." );
         }
-        
-        LOG.info( "Erstautor von \"Phase\": " + _datenbank.getEintragByBegriff( "Phase" ).get().getAutorErzeugung().getNutzername() );
     }
 
     
@@ -82,9 +80,9 @@ public class BeispielDatenImportRunner implements ApplicationRunner {
         final AutorEntity alice = _datenbank.getAutorByName( "alice" ).get();
         final AutorEntity bob   = _datenbank.getAutorByName( "bob"   ).get();
         
-        final GlossarEntity ge1 = new GlossarEntity( "Maven"  , "Build-Management-Tool für Java-Projekte."           , jetzt, jetzt, alice );
-        final GlossarEntity ge2 = new GlossarEntity( "Phase"  , "Ein Maven-Lifecycle besteht aus mehreren Phasen."   , jetzt, jetzt, alice );
-        final GlossarEntity ge3 = new GlossarEntity( "pom.xml", "Zentrale Konfigurationsdatei für ein Maven-Projekt.", jetzt, jetzt, bob   );
+        final GlossarEntity ge1 = new GlossarEntity( "Maven"  , "Build-Management-Tool für Java-Projekte."           , jetzt, alice );
+        final GlossarEntity ge2 = new GlossarEntity( "Phase"  , "Ein Maven-Lifecycle besteht aus mehreren Phasen."   , jetzt, alice );
+        final GlossarEntity ge3 = new GlossarEntity( "pom.xml", "Zentrale Konfigurationsdatei für ein Maven-Projekt.", jetzt, bob   );
                 
         _datenbank.neuerGlossarEintrag( ge1 );
         _datenbank.neuerGlossarEintrag( ge2 );

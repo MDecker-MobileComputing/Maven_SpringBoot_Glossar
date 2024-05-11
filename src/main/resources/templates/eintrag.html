@@ -48,10 +48,16 @@
         <span th:text="${#temporals.format(zeitpunkt_geaendert, 'dd.MM.yyyy, HH:mm:ss')}"></span>
     </p>
   </div>
-  <p class="klein">
-    <span class="fett">Angelegt von:</span>
-    <span th:text="${autor_erzeugung}"></span>    
-  </p>
+  <div class="klein">
+    <p>
+      <span class="fett">Angelegt von:</span>
+      <span th:text="${autor_erzeugung}"></span>    
+    </p>
+    <p th:if="${zeitpunkt_geaendert != null and #strings.length(zeitpunkt_geaendert) > 0}"><!-- Letzte Änderung kann auch vom Erzeuger gewesen sein, deshalb Zeitwerte vergleichen-->
+      <span class="fett">Letzte Änderung von:</span>
+      <span th:text="${autor_aenderung}"></span>    
+    </p>
+  </div>
 
   <br>
 

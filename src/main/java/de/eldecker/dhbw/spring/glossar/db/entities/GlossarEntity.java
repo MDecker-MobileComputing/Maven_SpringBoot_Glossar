@@ -87,6 +87,14 @@ public class GlossarEntity {
     @JoinColumn( name = "autor_erzeuger_fk", referencedColumnName = "id" )
     private AutorEntity _autorErzeugung;            
 
+    /**
+     * Referenz auf den letzten Änderer; für neu angelegte Einträge ist der letzte Änderer
+     * derselbe Autor wie in {@link #_autorErzeugung}. 
+     */
+    @ManyToOne( fetch = EAGER )
+    @JoinColumn( name = "autor_aenderer_fk", referencedColumnName = "id" )
+    private AutorEntity _autorAenderung;            
+
     
     /**
      * Default-Konstruktor, wird von JPA benötigt.
@@ -109,7 +117,7 @@ public class GlossarEntity {
      */
     public GlossarEntity( Long id, String begriff ) {
 
-        this( begriff, "", null, null, null );
+        this( begriff, "", null, null, null, null );
         _id = id;
     }
 
@@ -122,13 +130,36 @@ public class GlossarEntity {
                           String erklaerung,
                           LocalDateTime zeitpunktErzeugung,
                           LocalDateTime zeitpunktAenderung,
-                          AutorEntity autorErzeugung ) {
+                          AutorEntity autorErzeugung,
+                          AutorEntity autorAenderung ) {
 
         _begriff            = begriff;
         _erklaerung         = erklaerung;
         _zeitpunktErzeugung = zeitpunktErzeugung;
         _zeitpunktAenderung = zeitpunktAenderung;
         _autorErzeugung     = autorErzeugung;
+        _autorAenderung     = autorAenderung;
+    }
+
+    
+    /**
+     * Convenience-Konstruktor: Es können alle Attribute außer der ID gesetzt
+     * werden, aber {@code zeitpunktErzeugung} wird auch als Änderungszeitpunkt
+     * verwendet, und {@code autorErzeugung} wird auch als Autor der letzten
+     * Änderung verwendet; dies ist sinnvoll, wenn ein Eintrag ganz neu angelegt
+     * wird.
+     */
+    public GlossarEntity( String begriff,
+                          String erklaerung,
+                          LocalDateTime zeitpunktErzeugung,
+                          AutorEntity autorErzeugung ) {
+        
+        _begriff            = begriff;
+        _erklaerung         = erklaerung;
+        _zeitpunktErzeugung = zeitpunktErzeugung;
+        _zeitpunktAenderung = zeitpunktErzeugung; // sic!
+        _autorErzeugung     = autorErzeugung;
+        _autorAenderung     = autorErzeugung; // sic !
     }
 
 
@@ -256,6 +287,28 @@ public class GlossarEntity {
     public void setAutorErzeugung( AutorEntity autorErzeugung ) {
         
         _autorErzeugung = autorErzeugung;
+    }
+    
+    
+    /**
+     * Getter für den Autor, der die letzte Änderung am Eintrag vorgenommen hat.
+     * 
+     * @return Autor/Nutzer
+     */
+    public AutorEntity getAutorAenderung() {
+        
+        return _autorAenderung;
+    }
+    
+    
+    /**
+     * Getter für den Autor, der die letzte Änderung am Eintrag vorgenommen hat.
+     * 
+     * @param autorAenderung Autor/Nutzer
+     */
+    public void setAutorAenderung( AutorEntity autorAenderung ) {
+        
+        _autorAenderung = autorAenderung;
     }
 
 

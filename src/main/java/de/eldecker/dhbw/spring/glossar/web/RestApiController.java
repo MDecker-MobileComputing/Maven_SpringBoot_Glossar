@@ -1,5 +1,6 @@
 package de.eldecker.dhbw.spring.glossar.web;
 
+import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -146,13 +147,15 @@ public class RestApiController {
         
         final GlossarEntity eintragNeu = new GlossarEntity( payload.begriff(),
                                                             payload.erklaerung(),
-                                                            jetzt, jetzt,
+                                                            jetzt,
                                                             autor );                                                             
 
         final long idNeu = _datenbank.neuerGlossarEintrag( eintragNeu );
+        
+        final String ergebnisText = format( "Neuer Glossareintrag mit ID=%d gespeichert: \"%s\"", 
+                                             idNeu, eintragNeu.getBegriff() ); 
                         
-        return new ResponseEntity<>( "Neuer Glossareintrag mit ID=" + idNeu + " gespeichert: " + eintragNeu.getBegriff() , 
-                                     CREATED ); // HTTP-Status-Code 201
+        return new ResponseEntity<>( ergebnisText, CREATED ); // HTTP-Status-Code 201                                      
     }
     
     
@@ -193,10 +196,13 @@ public class RestApiController {
         eintrag.setBegriff(    payload.begriff()    );
         eintrag.setErklaerung( payload.erklaerung() );
         eintrag.setZeitpunktAenderung( now() );
+        eintrag.setAutorAenderung( autor );
         
         _datenbank.updateGlossarEintrag( eintrag );
-                
-        return new ResponseEntity<>( "Glossareintrag mit ID=" + id + " aktualisiert: " + eintrag.getBegriff(), 
-                                     OK ); // HTTP-Status-Code 201
+        
+        final String ergebnisText = format( "Glossareintrag mit ID=%d geändert: \"%s\"", 
+                                            id, payload.begriff() );
+                        
+        return new ResponseEntity<>( ergebnisText, OK ); // HTTP-Status-Code 201                                      
     }
 }
