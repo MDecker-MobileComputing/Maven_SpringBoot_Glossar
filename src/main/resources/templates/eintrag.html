@@ -38,24 +38,18 @@
 
   <div class="klein" th:if="${zeitpunkt_angelegt != null and #strings.length(zeitpunkt_angelegt) > 0}">
     <p>
-        <span class="fett">Erstellt am:</span>
-        &nbsp;
-        <span th:text="${#temporals.format(zeitpunkt_angelegt, 'dd.MM.yyyy, HH:mm:ss')}"></span>
+        Erstellt am
+        <span th:text="${#temporals.format(zeitpunkt_angelegt, 'dd.MM.yyyy')}"></span> um        
+        <span th:text="${#temporals.format(zeitpunkt_angelegt, 'HH:mm:ss')}"></span> Uhr
+        von 
+        <span th:text="${autor_erzeugung}"></span>
     </p>
     <p th:if="${zeitpunkt_geaendert != null and #strings.length(zeitpunkt_geaendert) > 0}">
-        <span class="fett">Letzte Änderung:</span>
-        &nbsp;
-        <span th:text="${#temporals.format(zeitpunkt_geaendert, 'dd.MM.yyyy, HH:mm:ss')}"></span>
-    </p>
-  </div>
-  <div class="klein">
-    <p>
-      <span class="fett">Angelegt von:</span>
-      <span th:text="${autor_erzeugung}"></span>    
-    </p>
-    <p th:if="${zeitpunkt_geaendert != null and #strings.length(zeitpunkt_geaendert) > 0}"><!-- Letzte Änderung kann auch vom Erzeuger gewesen sein, deshalb Zeitwerte vergleichen-->
-      <span class="fett">Letzte Änderung von:</span>
-      <span th:text="${autor_aenderung}"></span>    
+        Letzte Änderung am
+        <span th:text="${#temporals.format(zeitpunkt_geaendert, 'dd.MM.yyyy')}"></span> um
+        <span th:text="${#temporals.format(zeitpunkt_geaendert, 'HH:mm:ss')}"></span> Uhr
+        von
+        <span th:text="${autor_aenderung}"></span>   
     </p>
   </div>
 
