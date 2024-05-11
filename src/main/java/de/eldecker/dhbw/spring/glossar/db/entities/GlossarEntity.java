@@ -10,16 +10,20 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 
 
 /**
  * Ein Objekt dieser Klasse repräsentiert einen Glossareintrag in der zugehörigen DB-Tabelle.
+
  */
 @Entity
 @Table(name = "GLOSSAR_EINTRAEGE",
          indexes = { @Index( name = "idx_begriff", columnList = "begriff" ) }
 )
+@NamedQuery(name = "GlossarEntity.findByBegriff",
+            query = "SELECT g FROM GlossarEntity g WHERE LOWER(g._begriff) = LOWER(:begriff)")
 public class GlossarEntity {
 
     /**

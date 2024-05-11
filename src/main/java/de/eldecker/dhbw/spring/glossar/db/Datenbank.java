@@ -87,7 +87,11 @@ public class Datenbank {
 
 
     /**
-     * Glossareintrag anhand Begriff auslesen (mit allen Attributen).
+     * Glossareintrag anhand Begriff suchen.
+     * <br><br>
+     *
+     * Intern verwendet die Methode eine JPQL-Query, die als Annotation
+     * in der Entity-Klasse {@link GlossarEntity} definiert ist.
      *
      * @param begriff Begriff nach dem (case-insensitive) gesucht wird
      *
@@ -95,9 +99,8 @@ public class Datenbank {
      */
     public Optional<GlossarEntity> getEintragByBegriff( String begriff ) {
 
-        final String jpqlStr = "SELECT g FROM GlossarEntity g WHERE LOWER(g._begriff) = LOWER(:begriff)";
-
-        final TypedQuery<GlossarEntity> query = _em.createQuery( jpqlStr, GlossarEntity.class );
+        final TypedQuery<GlossarEntity> query = _em.createNamedQuery( "GlossarEntity.findByBegriff",
+                                                                      GlossarEntity.class );
         query.setParameter( "begriff", begriff );
 
         try {
