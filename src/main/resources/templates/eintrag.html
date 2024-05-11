@@ -36,7 +36,7 @@
 
   <br>
 
-  <div class="klein">
+  <div class="klein" th:if="${zeitpunkt_angelegt != null and #strings.length(zeitpunkt_angelegt) > 0}">
     <p>
         <span class="fett">Erstellt am:</span>
         &nbsp;
@@ -50,7 +50,6 @@
   </div>
 
   <br>
-
 
   <p th:if="${ist_angemeldet}">
     <a th:href="@{/app/bearbeiten/{id}(id=${eintrag_id})}">Eintrag bearbeiten</a>

@@ -1,5 +1,6 @@
 package de.eldecker.dhbw.spring.glossar.sicherheit;
 
+import static java.lang.String.format;
 import static org.springframework.security.crypto.factory.PasswordEncoderFactories.createDelegatingPasswordEncoder;
 
 import java.util.Optional;
@@ -76,8 +77,8 @@ public class MeinUserDetailsService implements UserDetailsService {
         if ( autor.isIstAktiv() == false ) {
 
             final String fehlerNachricht =
-                    String.format( "Nutzer \"%s\" auf Datenbank gefunden, ist aber inaktiv, deshalb wird Anmeldung verhindert.",
-                                    nutzername );
+                    format( "Nutzer \"%s\" auf Datenbank gefunden, ist aber inaktiv, deshalb wird Anmeldung verhindert.",
+                            nutzername );
 
             LOG.warn( fehlerNachricht );
 

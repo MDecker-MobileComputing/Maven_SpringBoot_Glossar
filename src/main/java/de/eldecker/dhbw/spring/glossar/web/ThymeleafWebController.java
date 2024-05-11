@@ -1,7 +1,9 @@
 package de.eldecker.dhbw.spring.glossar.web;
 
 import static java.lang.Long.parseLong;
+import static java.lang.String.format;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -137,52 +139,12 @@ public class ThymeleafWebController {
         final Optional<Long> idOptional = parseID( idStr );
         if ( idOptional.isEmpty() ) {
             
-            model.addAttribute( ATTRIBUT_FEHLERMELDUNG, "Seite mit ungültigem String \"" + idStr +                      
-                                                        "\"für Pfadparameter für ID aufgerufen." );
             return "eintrag";
         }
         
-        long idLong = idOptional.get();
-        try {
-
-            idLong = parseLong( idStr ); // throws NumberFormatException
-
-            final Optional<GlossarEntity> entityOptional = _datenbank.getEintragById( idLong );
-            if ( entityOptional.isPresent() ) {
-
-                final GlossarEntity entity = entityOptional.get();
-
-                model.addAttribute( ATTRIBUT_BEGRIFF            , entity.getBegriff()            );
-                model.addAttribute( ATTRIBUT_ERKLAERUNG         , entity.getErklaerung()         );
-                model.addAttribute( ATTRIBUT_ID                 , entity.getId()                 );
-                model.addAttribute( ATTRIBUT_ZEITPUNKT_ANGELEGT , entity.getZeitpunktErzeugung() );
-
-                if ( entity.getZeitpunktAenderung().isEqual( entity.getZeitpunktErzeugung() ) ) {
-
-                    model.addAttribute( ATTRIBUT_ZEITPUNKT_GEAENDERT, "" );
-
-                } else {
-
-                    model.addAttribute( ATTRIBUT_ZEITPUNKT_GEAENDERT, entity.getZeitpunktAenderung() );
-                }
-
-                LOG.info( "Glossareintrag {} aufgelöst: {}", idLong, entity.getBegriff() );
-
-            } else {
-
-                model.addAttribute( ATTRIBUT_BEGRIFF   , "???" );
-                model.addAttribute( ATTRIBUT_ERKLAERUNG, ""    );
-
-                model.addAttribute( ATTRIBUT_FEHLERMELDUNG, "Kein Eintrag mit ID=" + idLong + " gefunden." );
-                LOG.error( "Kein Glossareintrag mit ID={} gefunden.", idLong );
-            }
-
-        } catch ( NumberFormatException ex ) {
-
-            model.addAttribute( ATTRIBUT_BEGRIFF      , "???" );
-            model.addAttribute( ATTRIBUT_FEHLERMELDUNG, "ID \"" + idStr + "\" übergeben, ist kein gültiger long-Wert." );
-            LOG.error( "Pfadparameter für ID \"{}\" konnte nicht nach long geparst werden.", idStr, ex);
-        }
+        long id = idOptional.get();
+        
+        holeEntityFuerID( id, model );
 
         return "eintrag";
     }
@@ -247,11 +209,21 @@ public class ThymeleafWebController {
             return "eintrag";
         }               
         
+        final long idLong = idOptional.get();
+        
+        final boolean eintragGefunden = holeEntityFuerID( idLong, model );
+        if ( eintragGefunden == false ) {
+            
+            // ATTRIBUT_FEHLERMELDUNG wurde in holeEntityFuerID() gesetzt
+            return "eintrag";
+        }
+        
+        
         final boolean istNutzerAngemeldet = authentifzierungAufloesen ( authentication, model );
         if ( istNutzerAngemeldet == false) {
             
             // sollte nie passieren wenn Spring Security richtig konfiguriert
-            LOG.warn( "Unangemeldeter Nutzer Pfad /bearbeiten aufgerufen." );            
+            LOG.warn( "Unangemeldeter Nutzer hat Pfad /bearbeiten aufgerufen." );            
             return "fehler";
         }
                 
@@ -323,11 +295,89 @@ public class ThymeleafWebController {
             return Optional.of( idLong );
         }
         catch ( NumberFormatException ex ) {
-            
+                                    
             LOG.error( "Als Pfadparameter für ID übergebener String ist keine gültige Long-Zahl: {}", 
                        idString );
             return Optional.empty();
         }        
-    }    
+    }
+    
+    
+    /**
+     * Glossareintrag anhand ID von Datenbank holen und Attribute mit zugehörigen    
+     * Werten in {@code mode} setzen.
+     * <br><br>
+     * 
+     * Im Argument {@code model} werden Werte für die folgenden Keys gesetzt:
+     * <ul>
+     * <li>{@link #ATTRIBUT_BEGRIFF}</li>
+     * <li>{@link #ATTRIBUT_ERKLAERUNG}</li>
+     * <li>{@link #ATTRIBUT_ZEITPUNKT_ANGELEGT}</li>
+     * <li>{@link #ATTRIBUT_ZEITPUNKT_GEAENDERT}</li>
+     * <li>{@link #ATTRIBUT_ID}</li>
+     * <li>{@link #ATTRIBUT_FEHLERMELDUNG}</li>
+     * </ul>
+     * Für alle Keys wird zumindest ein leerer String gesetzt.
+     * Wenn kein Glossareintrag mit {@code id} gefunden wurde, dann werden die Attribute mit Begriff, Erklärung und 
+     * den Zeitpunkten mit einem leeren String gefüllt, dafür wird die Fehlermeldung gefüllt. 
+     * Das Attribut für den Änderungszeitpunkt wird nur dann mit einen Zeitpunkt gefüllt, wenn dieser Zeitpunkt vom 
+     * nicht dem Erzeugungszeitpunkt entspricht; wenn die beiden Zeitpunkte gleich sind, dann wird als Änderungszeitpunkt 
+     * ein leerer String gesetzt.   
+     * 
+     * @param id ID des Glossareintrags
+     * 
+     * @param model In diesem Argument gesetzte Key-Value-Paare sind wegen "Call By Reference" für den Aufrufer sichtbar;
+     *              siehe Beschreibung für Methode für die gesetzten Attribute.              
+     * 
+     * @return {@code true} gdw. ein Glossareintrag mit {@code id} gefunden wurde und
+     *         die entsprechenden Key-Value-Paare in {@code model} geschrieben wurden.
+     */
+    private boolean holeEntityFuerID( long id, Model model ) {
+        
+        final Optional<GlossarEntity> entityOptional = _datenbank.getEintragById( id );
+        if ( entityOptional.isEmpty() ) {
+            
+            model.addAttribute( ATTRIBUT_BEGRIFF            , "" );
+            model.addAttribute( ATTRIBUT_ERKLAERUNG         , "" );
+            model.addAttribute( ATTRIBUT_ZEITPUNKT_ANGELEGT , "" );
+            model.addAttribute( ATTRIBUT_ZEITPUNKT_GEAENDERT, "" );
+            model.addAttribute( ATTRIBUT_ID                 , "" );
+            
+            final String fehlerText = 
+                    format( "Kein Glossareintrag mit ID=%d (Pfadparameter) gefunden.", id );                          
+                                       
+            
+            model.addAttribute( ATTRIBUT_FEHLERMELDUNG, fehlerText );
+            LOG.error( fehlerText );
+            
+            return false;
+        }
+        
+        final GlossarEntity glossarEintrag = entityOptional.get();
+        
+        LOG.info( "Glossareintrag für ID={} (Pfadparameter) gefunden: \"{}\"", 
+                  id, glossarEintrag.getBegriff() );
+       
+        model.addAttribute( ATTRIBUT_FEHLERMELDUNG, "" );
+
+        model.addAttribute( ATTRIBUT_ID                 , id                             );
+        model.addAttribute( ATTRIBUT_BEGRIFF            , glossarEintrag.getBegriff()    );
+        model.addAttribute( ATTRIBUT_ERKLAERUNG         , glossarEintrag.getErklaerung() );
+        
+        final LocalDateTime zeitpunktAngelegt  = glossarEintrag.getZeitpunktErzeugung();
+        final LocalDateTime zeitpunktAenderung = glossarEintrag.getZeitpunktAenderung();
+        
+        model.addAttribute( ATTRIBUT_ZEITPUNKT_ANGELEGT , zeitpunktAngelegt );
+        if ( zeitpunktAngelegt.isEqual( zeitpunktAenderung )) {
+        
+            model.addAttribute( ATTRIBUT_ZEITPUNKT_GEAENDERT, "" );
+            
+        } else {
+            
+            model.addAttribute( ATTRIBUT_ZEITPUNKT_GEAENDERT, zeitpunktAenderung );
+        }
+                        
+        return true;                
+    }
     
 }
