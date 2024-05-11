@@ -24,6 +24,10 @@ ul li {
     font-style: italic;
 }
 
+.klein {
+    font-size: 0.6em;
+}
+
 .abstand_unten {
     margin-bottom: 2.5em;
 }
@@ -39,5 +43,5 @@ textarea, input[type="text"] {
 }
 
 #eingabe_begriff, #eingabe_erklaerung {
-    font-size: 20px;
+    font-size: 1.25em;
 }

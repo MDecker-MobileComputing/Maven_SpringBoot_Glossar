@@ -46,6 +46,12 @@ public class ThymeleafWebController {
     /** Attribut-Key für Template "eintrag" mit Erklärung zu einem Glossareintrag. */
     private static final String ATTRIBUT_ERKLAERUNG = "erklaerung";
 
+    /** Attribut-Key für Template "eintrag" mit Zeitpunkt, wann der Eintrag angelegt wurde. */
+    private static final String ATTRIBUT_ZEITPUNKT_ANGELEGT = "zeitpunkt_angelegt";
+
+    /** Attribut-Key für Template "eintrag" mit Zeitpunkt, wann der Eintrag zuletzt geändert wurde. */
+    private static final String ATTRIBUT_ZEITPUNKT_GEAENDERT = "zeitpunkt_geaendert";
+
     /** Attribut-Key für Template "eintrag" mit ID von gerade angezeigtem Glossareintrag. */
     private static final String ATTRIBUT_ID = "eintrag_id";
 
@@ -152,9 +158,11 @@ public class ThymeleafWebController {
 
                 final GlossarEntity entity = entityOptional.get();
 
-                model.addAttribute( ATTRIBUT_BEGRIFF   , entity.getBegriff()    );
-                model.addAttribute( ATTRIBUT_ERKLAERUNG, entity.getErklaerung() );
-                model.addAttribute( ATTRIBUT_ID        , entity.getId()         );
+                model.addAttribute( ATTRIBUT_BEGRIFF            , entity.getBegriff()            );
+                model.addAttribute( ATTRIBUT_ERKLAERUNG         , entity.getErklaerung()         );
+                model.addAttribute( ATTRIBUT_ID                 , entity.getId()                 );
+                model.addAttribute( ATTRIBUT_ZEITPUNKT_ANGELEGT , entity.getZeitpunktErzeugung() );
+                model.addAttribute( ATTRIBUT_ZEITPUNKT_GEAENDERT, entity.getZeitpunktAenderung() );
 
                 LOG.info( "Glossareintrag {} aufgelöst: {}", idLong, entity.getBegriff() );
 

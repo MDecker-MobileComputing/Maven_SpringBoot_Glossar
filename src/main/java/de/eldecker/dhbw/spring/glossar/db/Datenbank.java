@@ -66,6 +66,11 @@ public class Datenbank {
 
     /**
      * Glossareintrag anhand ID auslesen (mit allen Attributen).
+     * <br><br>
+     *
+     * Intern wird die Methode {@code find()} der JPA-Entity-Manager-Klasse
+     * verwendet, was aber nur funktioniert, wenn man den Primärschlüssel
+     * kennt.
      *
      * @param id Primärschlüssel/ID von Glossareintrag
      *
@@ -124,7 +129,8 @@ public class Datenbank {
     public long neuerGlossarEintrag( GlossarEntity eintrag ) {
 
         _em.persist( eintrag );
-        LOG.info( "Neuer Glossareintrag in Datenbank gespeichert: {}", eintrag.getBegriff() );
+        LOG.info( "Neuer Glossareintrag in Datenbank gespeichert: {}",
+                  eintrag.getBegriff() );
 
         return eintrag.getId();
     }
