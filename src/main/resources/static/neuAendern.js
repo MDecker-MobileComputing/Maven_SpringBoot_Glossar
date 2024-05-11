@@ -3,6 +3,8 @@
 
 /**
  * Event-Handler-Funktion für Klick auf den "Speichern"-Button.
+ * Wenn das (hidden) Attribut `eintrag_id` leer ist, wird ein neuer Eintrag angelegt,
+ * ansonsten wird ein bestehender Eintrag geändert.
  *
  * @returns {Boolean} Immer Wert `false`, um Laden einer anderen Seite zu verhindern.
  */
@@ -10,9 +12,10 @@ function onSpeichernButton() {
 
     const eingabeBegriff    = document.getElementById( "eingabe_begriff"    );
     const eingabeErklaerung = document.getElementById( "eingabe_erklaerung" );
-    if ( !eingabeBegriff || !eingabeErklaerung ) {
+    const eingabeID         = document.getElementById( "eintrag_id"         );
+    if ( !eingabeBegriff || !eingabeErklaerung || !eingabeID ) {
 
-        alert( "Interner Fehler: Referenz(en) auf Eingabe-Elemente nicht gefunden." );
+        alert( "Interner Fehler: Referenz auf mindestens ein Eingabe-Element nicht gefunden." );
         return false;
     }
 
@@ -30,16 +33,26 @@ function onSpeichernButton() {
         return false;
     }
 
+
+    let eingabeIDWert = eingabeID.value;
+    if ( !eingabeIDWert ) {
+
+        console.log( "ID nicht gesetzt, also wird neuer Eintrag angelegt." );
+        eingabeIDWert = "";
+    }
+
+
     begriff    = begriff.trim();
     erklaerung = erklaerung.trim();
 
     const payloadObjekt = {
-        begriff:    begriff,
-        erklaerung: erklaerung
+        begriff    : begriff,
+        erklaerung : erklaerung,
+        id         : eingabeIDWert
     };
-    const jsonPayload = JSON.stringify(payloadObjekt);
+    const jsonPayload = JSON.stringify( payloadObjekt );
 
-    fetch( "/api/v1/neu", {
+    fetch( "/api/v1/speichern", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: jsonPayload
@@ -48,14 +61,13 @@ function onSpeichernButton() {
 
         if (!response.ok) {
 
-            const statusText = `${response.statusText} (${response.status})`;
             if (response.status === 409) {
 
                 throw new Error( `Es gibt bereits einen Eintrag für den Begriff \"${begriff}\".` );
 
             } else {
 
-                throw new Error( `REST-Endpunkt hat Fehlercode zurückgeliefert: ${statusText}` );
+                throw new Error( `Fehler vom Server (Code ${response.status})` );   
             }
 
         } else {
@@ -66,12 +78,12 @@ function onSpeichernButton() {
     .then( data => {
 
         console.log( "Erfolg:", data );
-        window.location.href = "hauptseite";
+        window.location.href = "/app/hauptseite";
     })
     .catch( (fehler) => {
 
         console.error( "Fehler bei HTTP-POST-Request mit Glossareintrag:", fehler );
-        alert( "Fehler beim Speichern: " + fehler );
+        alert( fehler );
     });
 
     return false;

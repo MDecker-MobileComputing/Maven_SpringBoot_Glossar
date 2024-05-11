@@ -124,8 +124,8 @@ public class ThymeleafWebController {
      * @param model Objekt, in das die Werte für die Platzhalter in der Template-Datei
      *              geschrieben werden.
      *
-     * @param idStr ID (Nummer) des Glossareintrags als String, sollte sich nach {@code long}
-     *              parsen lassen
+     * @param idStr ID (Nummer) des Glossareintrags als String, sollte sich nach 
+     *              {@code long} parsen lassen
      *
      * @return "eintrag" (Name von Template-Datei ohne Datei-Endung)
      */
@@ -161,7 +161,7 @@ public class ThymeleafWebController {
         final boolean istNutzerAngemeldet = authentifzierungAufloesen ( authentication, model );
         if ( istNutzerAngemeldet == false) {
             
-            // sollte nie passieren wenn Spring Security richtig konfiguriert
+            // sollte nicht passieren wenn Spring Security richtig konfiguriert
             LOG.warn( "Unangemeldeter Nutzer hat Pfad /neu aufgerufen." );            
             return "fehler";
         }
@@ -195,7 +195,7 @@ public class ThymeleafWebController {
         final boolean istNutzerAngemeldet = authentifzierungAufloesen ( authentication, model );
         if ( istNutzerAngemeldet == false) {
             
-            // sollte nie passieren wenn Spring Security richtig konfiguriert
+            // sollte nicht passieren wenn Spring Security richtig konfiguriert
             LOG.warn( "Unangemeldeter Nutzer hat Pfad /bearbeiten aufgerufen." );            
             return "fehler";
         }

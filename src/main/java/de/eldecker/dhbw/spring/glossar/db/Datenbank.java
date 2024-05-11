@@ -129,10 +129,28 @@ public class Datenbank {
     public long neuerGlossarEintrag( GlossarEntity eintrag ) {
 
         _em.persist( eintrag );
-        LOG.info( "Neuer Glossareintrag in Datenbank gespeichert: {}",
+        LOG.info( "Neuer Glossareintrag mit ID={} in Datenbank gespeichert: {}",
+                  eintrag.getId(),
                   eintrag.getBegriff() );
 
         return eintrag.getId();
+    }
+    
+    
+    /**
+     * Glossareintrag auf DB aktualisieren.
+     *
+     * @param eintrag Zu aktualisierender Eintrag, die ID muss gefüllt sein.
+     *
+     * @return Neuer Zustand des Objekts
+     */
+    public GlossarEntity updateGlossarEintrag( GlossarEntity eintrag ) {
+        
+        final GlossarEntity ergebnis = _em.merge( eintrag ); 
+        
+        LOG.info( "Glossareintrag für Begriff \"{}\" aktualisiert.", eintrag.getBegriff() );
+        
+        return ergebnis;
     }
 
 
@@ -220,15 +238,24 @@ public class Datenbank {
      */
     public AutorEntity updateAutor( AutorEntity autorNutzer ) {
 
-        return _em.merge( autorNutzer );
+        final AutorEntity ergebnis = _em.merge( autorNutzer );
+        
+        LOG.info( "Autor mit Nutzername \"{}\" aktualisiert.", 
+                  ergebnis.getNutzername() );
+        
+        return ergebnis;
     }
 
 
     /**
      * Gibt Autoren zurück, für die {@code ist_active=true} gilt, deren
      * letzte Anmeldung aber schon mehr als {@code anzahlMinuten}
-     * zurückliegt.  Diese Autoren sollten aus Sicherheitsgründen
+     * zurückliegt. Diese Autoren sollen aus Sicherheitsgründen
      * deaktiviert werden.
+     * <br><br>
+     * 
+     * Die Methode verwendet intern die <i>Criteria API</i> anstelle 
+     * von JPQL.
      *
      * @param anzahlMinuten Anzahl der Minuten, die der Autor inaktiv
      *                      gewesen sein muss
