@@ -40,12 +40,12 @@
     <p>
         <span class="fett">Erstellt am:</span>
         &nbsp;
-        <span th:text="${zeitpunkt_angelegt}"></span>
+        <span th:text="${#temporals.format(zeitpunkt_angelegt, 'dd.MM.yyyy, HH:mm:ss')}"></span>
     </p>
     <p th:if="${zeitpunkt_geaendert != null and #strings.length(zeitpunkt_geaendert) > 0}">
         <span class="fett">Letzte Änderung:</span>
         &nbsp;
-        <span th:text="${zeitpunkt_geaendert}"></span>
+        <span th:text="${#temporals.format(zeitpunkt_geaendert, 'dd.MM.yyyy, HH:mm:ss')}"></span>
     </p>
   </div>
 
