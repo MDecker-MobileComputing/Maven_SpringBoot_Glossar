@@ -88,7 +88,6 @@ public class Datenbank {
 
     /**
      * Glossareintrag anhand Begriff auslesen (mit allen Attributen).
-     * <br><br>
      *
      * @param begriff Begriff nach dem gesucht wird
      *
@@ -168,29 +167,36 @@ public class Datenbank {
 
     /**
      * Autor/Nutzer anhand {@code nutzername} holen.
+     * <br><br>
+     *
+     * Intern wird die Methode {@code getSingleResult()} verwendet,
+     * weil wir davon ausgehen, dass der Nutzername eindeutig ist.
+     * Wenn es aber doch mehrere Nutzer mit gleichem Nutzernamen gibt,
+     * dann wird eine {@link NoResultException} (ungeprüfte Exception)
+     * geworfen.
      *
      * @param nutzername Nutzername nach dem gesucht wird (case-sensitive!)
      *
      * @return Optional ist leer, wenn Nutzer nicht gefunden; sonst ist der Nutzer
      *         mit allen Feldern enthalten.
      */
-    public Optional<AutorEntity> getAutorByName( String nutzername ) {
+    public Optional<AutorEntity> getAutorByName(final String nutzername) {
 
         final String jpqlStr = "SELECT a FROM AutorEntity a WHERE a._nutzername = :nutzername";
 
         final TypedQuery<AutorEntity> query = _em.createQuery( jpqlStr, AutorEntity.class );
+
         query.setParameter( "nutzername", nutzername );
 
-        final List<AutorEntity> results = query.getResultList(); // eigentliche Query ausführen
+        try {
 
-        if ( results.isEmpty() ) {
+            final AutorEntity result = query.getSingleResult();
+            return Optional.of( result );
 
-            LOG.warn( "Kein Nutzer mit Nutzername '{}' gefunden.", nutzername );
+        } catch ( NoResultException e ) {
+
+            LOG.warn( "Kein Nutzer mit Nutzername \"{}\" gefunden.", nutzername );
             return Optional.empty();
-
-        } else {
-
-            return Optional.of( results.get(0) );
         }
     }
 
