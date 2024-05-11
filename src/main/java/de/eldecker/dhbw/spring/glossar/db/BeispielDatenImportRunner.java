@@ -57,6 +57,8 @@ public class BeispielDatenImportRunner implements ApplicationRunner {
 
             LOG.info( "Beispiel-Daten werden nicht in DB geschrieben, da bereits Einträge vorhanden sind." );            
             
+            //LOG.info( "Inaktive Autoren:" + _datenbank.getInaktiveAutoren( 5 ) );
+            
         } else { // Beispieldatensätze in DB schreiben
 
             glossarEintraegeErzeugen();

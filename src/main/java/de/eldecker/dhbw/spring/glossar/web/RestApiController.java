@@ -31,8 +31,9 @@ import de.eldecker.dhbw.spring.glossar.helferlein.Payload;
 
 
 /**
- * REST-Controller-Klasse zur Bereitstellung der REST-Endpunkte,
- * die vom Frontend (HTML+JavaScript im Browser) angesprochen werden.
+ * REST-Controller-Klasse zur Bereitstellung des REST-Endpunkt,
+ * der vom JavaScript-Code im Frontend für das Anlegen und Ändern
+ * von Glossareinträgen aufgerufen wird.
  */
 @RestController
 @RequestMapping( "/api/v1" )

@@ -21,6 +21,7 @@ import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 
@@ -277,7 +278,10 @@ public class Datenbank {
                                                                      zeitSchwellwert );
 
         final Predicate predikatKombiniert = cBuilder.and( predikatIstAktiv, predikatLetzteAnmeldung );
-        cQuery.select( rootAutor ).where( predikatKombiniert );
+
+        final Order orderLetzteAnmeldung = cBuilder.asc( rootAutor.get("_letzteAnmeldung") );
+
+        cQuery.select( rootAutor ).where( predikatKombiniert ).orderBy( orderLetzteAnmeldung );
 
         final TypedQuery<AutorEntity> query = _em.createQuery( cQuery );
 
