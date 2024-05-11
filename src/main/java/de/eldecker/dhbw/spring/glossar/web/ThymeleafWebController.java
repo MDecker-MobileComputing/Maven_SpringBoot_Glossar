@@ -22,7 +22,7 @@ import de.eldecker.dhbw.spring.glossar.db.entities.GlossarEntity;
 /**
  * Controller (kein RestController!), der die Anfragen für die Thymeleaf-Views bearbeitet.
  * Alle Pfade beginnen mit {@code /app/}.
- * Die Methoden geben immer den Namen (ohne Datei-Endung) der darzustellenden Template-Datei
+ * Die Mapping-Methoden geben immer den Namen (ohne Datei-Endung) der darzustellenden Template-Datei
  * zurück, der im Ordner {@code src/main/resources/templates/} gesucht wird.
  */
 @Controller
@@ -31,10 +31,17 @@ public class ThymeleafWebController {
 
     private static final Logger LOG = LoggerFactory.getLogger( ThymeleafWebController.class );
 
-    /** Attribut-Key für bool'schen Wert, der gdw. {@code true} ist, wenn der Nutzer angemeldet. */
+    /** 
+     * Attribut-Key für bool'schen Wert, der gdw. {@code true} ist, wenn der Nutzer angemeldet;
+     * siehe auch {@link #ATTRIBUT_NUTZER}. 
+     */
     private static final String ATTRIBUT_ANGEMELDET = "ist_angemeldet";
 
-    /** Attribut-Key für Template "hauptseite"; referenziert leeren String, wenn kein Nutzer angemeldet. */
+    /** 
+     * Attribut-Key für Template: referenziert Nutzername oder (wenn kein Nutzer angemeldet) leeren String.
+     * Für Ersteres referenziert Key {@link #ATTRIBUT_ANGEMELDET} den Wert {@code true},
+     * sonst {@code false}.  
+     */
     private static final String ATTRIBUT_NUTZER = "nutzername";
 
     /** Attribut-Key für Template "hauptseite" mit Liste der Einträge. */
@@ -90,21 +97,7 @@ public class ThymeleafWebController {
     public String hauptseiteAnzeigen( Authentication authentication,
                                       Model model ) {
 
-        final boolean nutzerIstAngemeldet = authentication != null &&
-                                            authentication.isAuthenticated();
-        if ( nutzerIstAngemeldet ) {
-
-            final String nutzername = authentication.getName();
-            LOG.info( "Zugriff auf Hauptseite von Nutzer \"{}\".", nutzername );
-            model.addAttribute( ATTRIBUT_NUTZER    , nutzername );
-            model.addAttribute( ATTRIBUT_ANGEMELDET, true       );
-
-        } else {
-
-            LOG.info( "Zugriff auf Hauptseite von unangemeldetem Nutzer." );
-            model.addAttribute( ATTRIBUT_NUTZER    , ""    );
-            model.addAttribute( ATTRIBUT_ANGEMELDET, false );
-        }
+        authentifzierungAufloesen( authentication, model );
 
         final List<GlossarEntity> begriffListe = _datenbank.getGlossarBegriffe();
         model.addAttribute( ATTRIBUT_EINTRAEGE_LISTE, begriffListe );
@@ -112,7 +105,7 @@ public class ThymeleafWebController {
         return "hauptseite";
     }
 
-
+      
     /**
      * Einzelnen Glossareintrag anzeigen.
      *
@@ -132,21 +125,7 @@ public class ThymeleafWebController {
                                    Model model,
                                    @PathVariable("id") String idStr ) {
 
-        final boolean nutzerIstAngemeldet = authentication != null &&
-                                            authentication.isAuthenticated();
-        if ( nutzerIstAngemeldet ) {
-
-            final String nutzername = authentication.getName();
-            LOG.info( "Zugriff auf Eintrag mit ID={} von Nutzer \"{}\".", idStr, nutzername );
-            model.addAttribute( ATTRIBUT_NUTZER    , nutzername );
-            model.addAttribute( ATTRIBUT_ANGEMELDET, true       );
-
-        } else {
-
-            LOG.info( "Zugriff auf Eintrag mit ID={} von anonymen Nutzer.", idStr );
-            model.addAttribute( ATTRIBUT_NUTZER    , ""    );
-            model.addAttribute( ATTRIBUT_ANGEMELDET, false );
-        }
+        authentifzierungAufloesen( authentication, model );
 
         long idLong = -1;
         try {
@@ -204,24 +183,21 @@ public class ThymeleafWebController {
      *              geschrieben werden.
      *
      * @return "neu_bearbeiten" (Name von Template-Datei ohne Datei-Endung)
-     *         oder "hauptseite" wenn Nutzer nicht angemeldet ist.
+     *         oder "fehler" wenn Nutzer nicht angemeldet ist.
      */
     @GetMapping( "/neu" )
     public String eintragErzeugen( Authentication authentication,
                                    Model model ) {
-
-        model.addAttribute( ATTRIBUT_SEITENTITEL, "Neuen Eintrag im Glossar anlegen" );
-
-        if ( authentication == null || !authentication.isAuthenticated() ) {
-
-            // Dieses Fall sollte nicht aufreten, da /neu durch Security-Konfiguration
-            // nur für authentifizierte Nutzer erreichbar ist.
-
-            LOG.warn( "Unangemeldeter Nutzer hat Seite für neuen Glossareintrag aufgerufen." );
-            model.addAttribute( ATTRIBUT_FEHLERMELDUNG, "Sie sind nicht berechtigt neue Einträge anzulegen." );
-
-            return "hauptseite";
+        
+        final boolean istNutzerAngemeldet = authentifzierungAufloesen ( authentication, model );
+        if ( istNutzerAngemeldet == false) {
+            
+            // sollte nie passieren wenn Spring Security richtig konfiguriert
+            LOG.warn( "Unangemeldeter Nutzer hat Pfad /neu aufgerufen." );            
+            return "fehler";
         }
+        
+        model.addAttribute( ATTRIBUT_SEITENTITEL, "Neuen Eintrag im Glossar anlegen" );
 
         return "neu_bearbeiten";
     }
@@ -247,21 +223,60 @@ public class ThymeleafWebController {
                                      Model model,
                                      @PathVariable("id") String idStr ) {
 
-        model.addAttribute( ATTRIBUT_SEITENTITEL, "Eintrag im Glossar bearbeiten" );
-
-        if ( authentication == null || !authentication.isAuthenticated() ) {
-
-            LOG.warn( "Unangemeldeter Nutzer hat Seite zum Bearbeiten von Glossareintrag mit ID \"{}\" aufgerufen.",
-                      idStr );
-
-            model.addAttribute( ATTRIBUT_FEHLERMELDUNG, "Sie sind nicht berechtigt Einträge zu bearbeiten." );
-
-        } else {
-
-            // ...
+        final boolean istNutzerAngemeldet = authentifzierungAufloesen ( authentication, model );
+        if ( istNutzerAngemeldet == false) {
+            
+            // sollte nie passieren wenn Spring Security richtig konfiguriert
+            LOG.warn( "Unangemeldeter Nutzer Pfad /bearbeiten aufgerufen." );            
+            return "fehler";
         }
+                
+        model.addAttribute( ATTRIBUT_SEITENTITEL, "Eintrag im Glossar bearbeiten" );
 
         return "neu_bearbeiten";
     }
+    
+    
+    /** 
+     * <b>Hilfsmethode:</b> 
+     * Platzhalterwerte in {@code model} in Abhängigkeit ob ein Nutzer
+     * angemeldet ist oder nicht setzen.
+     * <br><br>
+     * 
+     * Die in der Methode dem Argument {@code model} hinzugefügten 
+     * Key-Value-Paare sind wegen "Call By Reference" auch für den
+     * Aufrufer sichtbar. 
+     * 
+     * @param authentication Objekt zur Abfrage, ob Nutzer authentifiziert ist;
+     *                       ACHTUNG: ist {@code null} für unangemeldete Nutzer. 
+     * 
+     * @param model Objekt, in das die Werte für die Platzhalter in der 
+     *              Template-Datei geschrieben werden. Es werden
+     *              Werte für die folgenden Keys gesetzt:
+     *              {@link #ATTRIBUT_NUTZER},
+     *              {@link #ATTRIBUT_ANGEMELDET}
+     * 
+     * @return {@code true} gdw. ein Nutzer angemeldet ist
+     */
+    private boolean authentifzierungAufloesen( Authentication authentication,
+                                               Model model ) {
+        
+        final boolean nutzerIstAngemeldet = authentication != null &&
+                                            authentication.isAuthenticated();
+        if ( nutzerIstAngemeldet ) {
+        
+            final String nutzername = authentication.getName();
+                        
+            model.addAttribute( ATTRIBUT_NUTZER    , nutzername );
+            model.addAttribute( ATTRIBUT_ANGEMELDET, true       );
+        
+        } else {
 
+            model.addAttribute( ATTRIBUT_NUTZER    , ""    );
+            model.addAttribute( ATTRIBUT_ANGEMELDET, false );
+        }          
+        
+        return nutzerIstAngemeldet;
+    }    
+    
 }
