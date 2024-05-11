@@ -75,7 +75,8 @@ public class Datenbank {
      *
      * @param id Primärschlüssel/ID von Glossareintrag
      *
-     * @return Optional enthält Eintrag wenn gefunden
+     * @return Optional enthält Eintrag wenn gefunden; enthält auch bereits
+     *         die referenzierten Autoren (eager loading).
      */
     public Optional<GlossarEntity> getEintragById( Long id ) {
 
@@ -110,6 +111,7 @@ public class Datenbank {
         query.setParameter( "begriff", begriff );
 
         try {
+            
             final GlossarEntity result = query.getSingleResult();
             return Optional.ofNullable( result );
         }

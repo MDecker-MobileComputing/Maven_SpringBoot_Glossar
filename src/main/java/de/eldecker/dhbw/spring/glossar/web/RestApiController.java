@@ -5,6 +5,7 @@ import static java.time.LocalDateTime.now;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.eldecker.dhbw.spring.glossar.db.Datenbank;
+import de.eldecker.dhbw.spring.glossar.db.entities.AutorEntity;
 import de.eldecker.dhbw.spring.glossar.db.entities.GlossarEntity;
 import de.eldecker.dhbw.spring.glossar.helferlein.Payload;
 
@@ -68,7 +70,8 @@ public class RestApiController {
      * @param authentication Objekt für Abfrage authentifizierter Nutzer.
      *
      * @return Wenn erfolgreich dann HTTP-Status-Code 201 (neuer Eintrag) bzw. 
-     *         200 (Änderung). 
+     *         200 (Änderung); wenn der aktuelle Nutzer in der DB nicht gefunden
+     *         wird, dann wird 500 (Internal Server Error) zurückgegeben. 
      */
     @PostMapping( "/speichern" )
     @Transactional
@@ -83,6 +86,16 @@ public class RestApiController {
         }
         
         final String nameAutor = authentication.getName();
+        
+        final Optional<AutorEntity> autorOptional = _datenbank.getAutorByName( nameAutor );
+        if ( autorOptional.isEmpty() ) {
+            
+            LOG.error( "Aktueller Nutzer \"{}\" nicht in Datenbank gefunden.", nameAutor );
+            
+            return new ResponseEntity<>( "Interner Fehler: Aktueller Nutzer nicht in Datenbank gefunden.", 
+                                         INTERNAL_SERVER_ERROR );
+        }
+        final AutorEntity autor = autorOptional.get();
 
         Payload payloadObjekt = null;
         try {
@@ -99,11 +112,11 @@ public class RestApiController {
         
         if ( idOptional.isPresent() ) {
             
-            return eintragAendern( payloadObjekt, nameAutor );
+            return eintragAendern( payloadObjekt, autor );
             
         } else {
             
-            return eintragNeu( payloadObjekt, nameAutor );
+            return eintragNeu( payloadObjekt, autor );
         }
     }
     
@@ -113,12 +126,12 @@ public class RestApiController {
      * 
      * @param payload Payload mit Details für neuen Eintrag
      * 
-     * @param nameAutor Name des Nutzers, der Eintrag angelegt hat
+     * @param autor Der Nutzer, der den Eintrag anlegen will
      * 
      * @return HTTP-Status-Code 201 (Created) wenn erfolgreich, 409 (Conflict) wenn 
      *         Eintrag schon vorhanden. 
      */
-    private ResponseEntity<String> eintragNeu( Payload payload, String nameAutor ) {
+    private ResponseEntity<String> eintragNeu( Payload payload, AutorEntity autor ) {
                                                       
         final String begriffNeu = payload.begriff();
         final Optional<GlossarEntity> eintragAlt = _datenbank.getEintragByBegriff( begriffNeu );
@@ -133,11 +146,11 @@ public class RestApiController {
         
         final GlossarEntity eintragNeu = new GlossarEntity( payload.begriff(),
                                                             payload.erklaerung(),
-                                                            jetzt, jetzt );                                                             
+                                                            jetzt, jetzt,
+                                                            autor );                                                             
 
         final long idNeu = _datenbank.neuerGlossarEintrag( eintragNeu );
-        
-                
+                        
         return new ResponseEntity<>( "Neuer Glossareintrag mit ID=" + idNeu + " gespeichert: " + eintragNeu.getBegriff() , 
                                      CREATED ); // HTTP-Status-Code 201
     }
@@ -151,14 +164,14 @@ public class RestApiController {
      *                die Methode {@link Payload#holeID()} eine ID
      *                zurückgibt.
      * 
-     * @param nameAutor Name des Nutzers, der Eintrag ändern will
+     * @param autor Der Nutzer, der den Eintrag ändern will
      * 
      * @return HTTP-Status-Code 200 (OK) wenn Änderung erfolgreich,
      *         400 (Bad Request) wenn es keinen Glossareintrag mit der ID
      *         aus {@code payload} gibt oder wenn das Feld {@code begriff}
      *         in diesem Objekt leer ist.
      */
-    private ResponseEntity<String> eintragAendern( Payload payload, String nameAutor ) {
+    private ResponseEntity<String> eintragAendern( Payload payload, AutorEntity autor ) {
                                         
         if ( payload.begriff().isBlank() ) {
             

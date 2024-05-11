@@ -48,6 +48,10 @@
         <span th:text="${#temporals.format(zeitpunkt_geaendert, 'dd.MM.yyyy, HH:mm:ss')}"></span>
     </p>
   </div>
+  <p class="klein">
+    <span class="fett">Angelegt von:</span>
+    <span th:text="${autor_erzeugung}"></span>    
+  </p>
 
   <br>
 

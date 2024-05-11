@@ -1,5 +1,6 @@
 package de.eldecker.dhbw.spring.glossar.db.entities;
 
+import static jakarta.persistence.FetchType.EAGER;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 import java.time.LocalDateTime;
@@ -10,6 +11,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 
@@ -64,6 +67,28 @@ public class GlossarEntity {
 
 
     /**
+     * Eine Glossar-Entity verweist auf den einen Autor, der den Eintrag ursprünglich angelegt hat; 
+     * dieser Autor ändert sich auch nicht, wenn der Eintrag von anderen Nutzern geändert wird.
+     * Verschiedene Glossar-Entity-Objekte können aber denselben Autor referenzieren, deshalb
+     * handelt es sich um eine "Many-to-one"-Beziehung (siehe gleichnamige Annotation).
+     * <br><br>
+     * 
+     * Die Information für diese Beziehung wird in der Tabelle mit den Glossareinträgen gespeichert,
+     * die Glossareinträge sind also die "owning side" und kriegen daher die {@code JoinColumn} annotation.
+     * <br><br>
+     * 
+     * Der definierte Fetch-Typ {@code EAGER} ist der Default-Wert (könnte also auch weggelassen
+     * werden ohne das Verhalten des Programms zu verändern) und sorgt dafür, dass beim
+     * Laden der Entity mit der Methode {@code find()} von {@code EntityManager} sofort geladen
+     * wird (bei {@code LAZY} würde zuerst ein Proxy-Objekt für den Autor referenziert, das
+     * beim ersten Zugriff durch die Werte von der Datenbank ersetzt wird). 
+     */
+    @ManyToOne( fetch = EAGER )
+    @JoinColumn( name = "autor_erzeuger_fk", referencedColumnName = "id" )
+    private AutorEntity _autorErzeugung;            
+
+    
+    /**
      * Default-Konstruktor, wird von JPA benötigt.
      */
     public GlossarEntity() {
@@ -82,9 +107,9 @@ public class GlossarEntity {
      *
      * @param begriff Glossarbegriff.
      */
-    public GlossarEntity(Long id, String begriff) {
+    public GlossarEntity( Long id, String begriff ) {
 
-        this( begriff, "", null, null );
+        this( begriff, "", null, null, null );
         _id = id;
     }
 
@@ -96,12 +121,14 @@ public class GlossarEntity {
     public GlossarEntity( String begriff,
                           String erklaerung,
                           LocalDateTime zeitpunktErzeugung,
-                          LocalDateTime zeitpunktAenderung ) {
+                          LocalDateTime zeitpunktAenderung,
+                          AutorEntity autorErzeugung ) {
 
         _begriff            = begriff;
         _erklaerung         = erklaerung;
         _zeitpunktErzeugung = zeitpunktErzeugung;
         _zeitpunktAenderung = zeitpunktAenderung;
+        _autorErzeugung     = autorErzeugung;
     }
 
 
@@ -207,6 +234,28 @@ public class GlossarEntity {
     public void setZeitpunktAenderung( LocalDateTime zeitpunktAenderung ) {
 
         _zeitpunktAenderung = zeitpunktAenderung;
+    }
+
+    
+    /**
+     * Getter für den Autor, der den Eintrag neu angelegt hat.
+     * 
+     * @return Autor/Nutzer
+     */
+    public AutorEntity getAutorErzeugung() {
+        
+        return _autorErzeugung;
+    }
+
+
+    /**
+     * Setter für den Autor, der den Eintrag neu angelegt hat.
+     * 
+     * @param autorErzeugung Autor/Nutzer
+     */
+    public void setAutorErzeugung( AutorEntity autorErzeugung ) {
+        
+        _autorErzeugung = autorErzeugung;
     }
 
 
