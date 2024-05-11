@@ -90,11 +90,15 @@ public class Datenbank {
      * Fügt einen neuen Glossareintrag in die Datenbank ein.
      *
      * @param eintrag Neuer Glossareintrag
+     *
+     * @return ID des neuen Eintrags
      */
-    public void neuerGlossarEintrag( GlossarEntity eintrag ) {
+    public long neuerGlossarEintrag( GlossarEntity eintrag ) {
 
         _em.persist( eintrag );
         LOG.info( "Neuer Glossareintrag in Datenbank gespeichert: {}", eintrag.getBegriff() );
+
+        return eintrag.getId();
     }
 
 
@@ -147,7 +151,7 @@ public class Datenbank {
     public Optional<AutorEntity> getAutorByName( String nutzername ) {
 
         final String jpqlStr = "SELECT a FROM AutorEntity a WHERE a._nutzername = :nutzername";
-        
+
         final TypedQuery<AutorEntity> query = _em.createQuery( jpqlStr, AutorEntity.class );
         query.setParameter( "nutzername", nutzername );
 
@@ -163,53 +167,53 @@ public class Datenbank {
             return Optional.of( results.get(0) );
         }
     }
-    
-    
+
+
     /**
      * Objekt mit Autor/Nutzer auf DB aktualisieren.
-     * 
-     * @param autorNutzer Nutzer mit mind. einem neuen Attributwert (außer der ID), 
-     *                    ID muss gefüllt sein.  
-     * 
+     *
+     * @param autorNutzer Nutzer mit mind. einem neuen Attributwert (außer der ID),
+     *                    ID muss gefüllt sein.
+     *
      * @return Neuer Zustand des Objekts
      */
     public AutorEntity updateAutor( AutorEntity autorNutzer ) {
-    
+
         return _em.merge( autorNutzer );
     }
-    
-    
+
+
     /**
      * Gibt Autoren zurück, für die {@code ist_active=true} gilt, deren
      * letzte Anmeldung aber schon mehr als {@code anzahlMinuten}
      * zurückliegt.  Diese Autoren sollten aus Sicherheitsgründen
      * deaktiviert werden.
-     * 
-     * @param anzahlMinuten Anzahl der Minuten, die der Autor inaktiv 
-     *                      gewesen sein muss 
-     * 
+     *
+     * @param anzahlMinuten Anzahl der Minuten, die der Autor inaktiv
+     *                      gewesen sein muss
+     *
      * @return Liste der inaktiven Autoren; kann leer sein, ist aber nicht
      *         {@code null}
      */
     public List<AutorEntity> getInaktiveAutoren( int anzahlMinuten ) {
-        
-        final LocalDateTime zeitSchwellwert = now().minus( anzahlMinuten, MINUTES );                                                           
-        
+
+        final LocalDateTime zeitSchwellwert = now().minus( anzahlMinuten, MINUTES );
+
         final CriteriaBuilder            cBuilder = _em.getCriteriaBuilder();
         final CriteriaQuery<AutorEntity> cQuery   = cBuilder.createQuery( AutorEntity.class );
-        
+
         final Root<AutorEntity> rootAutor = cQuery.from( AutorEntity.class );
-        
+
         final Predicate predikatIstAktiv        = cBuilder.isTrue(   rootAutor.get( "_istAktiv"        ) );
-        final Predicate predikatLetzteAnmeldung = cBuilder.lessThan( rootAutor.get( "_letzteAnmeldung" ), 
+        final Predicate predikatLetzteAnmeldung = cBuilder.lessThan( rootAutor.get( "_letzteAnmeldung" ),
                                                                      zeitSchwellwert );
-        
+
         final Predicate predikatKombiniert = cBuilder.and( predikatIstAktiv, predikatLetzteAnmeldung );
         cQuery.select( rootAutor ).where( predikatKombiniert );
-        
-        final TypedQuery<AutorEntity> query = _em.createQuery( cQuery ); 
-        
+
+        final TypedQuery<AutorEntity> query = _em.createQuery( cQuery );
+
         return query.getResultList();
-    }    
-         
+    }
+
 }
