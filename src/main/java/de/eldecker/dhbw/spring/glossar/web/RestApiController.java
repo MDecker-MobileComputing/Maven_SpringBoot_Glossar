@@ -1,12 +1,19 @@
 package de.eldecker.dhbw.spring.glossar.web;
 
 import static java.time.LocalDateTime.now;
+
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
+import jakarta.transaction.Transactional;
+import java.util.Optional;
 import java.time.LocalDateTime;
 
-import static org.springframework.http.HttpStatus.CREATED;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,13 +25,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import de.eldecker.dhbw.spring.glossar.db.Datenbank;
 import de.eldecker.dhbw.spring.glossar.db.entities.GlossarEntity;
-import jakarta.transaction.Transactional;
 
 
 /**
@@ -66,7 +68,9 @@ public class RestApiController {
      *
      * @param authentication Objekt für Abfrage authentifizierter Nutzer.
      *
-     * @return HTTP-Status 201 wenn erfolgreich, oder 401 wenn keine Berechtigung.
+     * @return HTTP-Status 201 wenn erfolgreich, 401 wenn keine Berechtigung,
+     *         400 bei ungültiger JSON-Payload, 409 bei Konflikt (Eintrag bereits
+     *         vorhanden).
      */
     @PostMapping( "/neu" )
     @Transactional
@@ -92,15 +96,21 @@ public class RestApiController {
             return new ResponseEntity<>( "Ungültige JSON-Payload.", BAD_REQUEST);
         }
 
-        // TODO: Überprüfen, dass es den Eintrag nicht schon gibt
+        final String begriffNeu = payloadObjekt.begriff();
+        final Optional<GlossarEntity> eintragAlt = _datenbank.getEintragByBegriff( begriffNeu );
+        if ( eintragAlt.isPresent() ) {
+
+            LOG.warn( "Glossareintrag mit Begriff \"{}\" bereits vorhanden.", begriffNeu );
+            return new ResponseEntity<>( "Eintrag mit Begriff bereits vorhanden.", CONFLICT );
+        }
 
         final LocalDateTime jetzt = now();
 
-        final GlossarEntity ge = new GlossarEntity( payloadObjekt.begriff(),
-                                                    payloadObjekt.erklaerung(),
-                                                    jetzt, jetzt );
+        final GlossarEntity eintragNeu = new GlossarEntity( begriffNeu,
+                                                            payloadObjekt.erklaerung(),
+                                                            jetzt, jetzt );
 
-        final long idNeu = _datenbank.neuerGlossarEintrag( ge );
+        final long idNeu = _datenbank.neuerGlossarEintrag( eintragNeu );
         LOG.info( "Neuer Glossareintrag mit ID {} angelegt.", idNeu );
 
         return new ResponseEntity<>( "Neuer Eintrag im Glossar gespeichert", CREATED ); // HTTP-Status-Code 201

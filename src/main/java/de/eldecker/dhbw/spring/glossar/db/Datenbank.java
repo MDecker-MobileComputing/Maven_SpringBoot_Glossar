@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -76,11 +77,36 @@ public class Datenbank {
 
             final GlossarEntity ergebnis = _em.find( GlossarEntity.class, id );
             return Optional.ofNullable( ergebnis );
-
         }
         catch ( IllegalArgumentException ex ) {
 
             LOG.error( "Fehler bei Lesen von Glossareintrag anhand ID.", ex );
+            return Optional.empty();
+        }
+    }
+
+
+    /**
+     * Glossareintrag anhand Begriff auslesen (mit allen Attributen).
+     * <br><br>
+     *
+     * @param begriff Begriff nach dem gesucht wird
+     *
+     * @return Optional enthält Eintrag (mit allen Attributen gefüllt) wenn gefunden
+     */
+    public Optional<GlossarEntity> getEintragByBegriff( String begriff ) {
+
+        final String jpqlStr = "SELECT g FROM GlossarEntity g WHERE g._begriff = :begriff";
+
+        final TypedQuery<GlossarEntity> query = _em.createQuery( jpqlStr, GlossarEntity.class );
+        query.setParameter( "begriff", begriff );
+
+        try {
+            final GlossarEntity result = query.getSingleResult();
+            return Optional.ofNullable( result );
+        }
+        catch( NoResultException ex ) {
+
             return Optional.empty();
         }
     }

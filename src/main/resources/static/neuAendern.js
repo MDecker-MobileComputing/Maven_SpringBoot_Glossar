@@ -49,7 +49,14 @@ function onSpeichernButton() {
         if (!response.ok) {
 
             const statusText = `${response.statusText} (${response.status})`;
-            throw new Error( `REST-Endpunkt hat Fehlercode zurückgeliefert: ${statusText}` );
+            if (response.status === 409) {
+
+                throw new Error( `Es gibt bereits einen Eintrag für den Begriff \"${begriff}\".` );
+
+            } else {
+
+                throw new Error( `REST-Endpunkt hat Fehlercode zurückgeliefert: ${statusText}` );
+            }
 
         } else {
 
