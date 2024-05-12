@@ -66,6 +66,7 @@ public class AnmeldungFehlgeschlagenHandler implements AuthenticationFailureHand
     /**
      * Diese Methode wird für jeden gescheiterten Anmeldeversuch aufgerufen:
      * <ul>
+     * <li>Nachricht in Logfile schreiben.</li>
      * <li>Wenn ein gültiger Nutzername eingegeben wurde: Zähler fehlgeschlagener Anmeldeversuche
      *     wird erhöht.</li>
      * <li>Wenn Anzahl fehlgeschlagener Anmeldeversuche den konfigurierten Schwellwert erreicht hat, 

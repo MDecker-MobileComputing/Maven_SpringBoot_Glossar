@@ -31,8 +31,8 @@ import jakarta.persistence.criteria.Root;
  * <br><br>
  * 
  * Achtung: Alle Methodenaufrufe für schreibende Zugriff müssen in 
- * einer Transaktion stattfinden, z.B. {@code Transactional} annotierter
- * Methode.
+ * einer Transaktion stattfinden, v.a. in einer mit {@code Transactional} 
+ * annotierten Methode.
  */
 @Repository
 public class Datenbank {
