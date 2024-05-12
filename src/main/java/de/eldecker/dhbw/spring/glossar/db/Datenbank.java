@@ -34,7 +34,7 @@ public class Datenbank {
 
     private final static Logger LOG = LoggerFactory.getLogger( Datenbank.class );
 
-    /** Zentrale Objekt von JPA für Datenbankzugriffe. */
+    /** Zentrales Objekt von JPA für Datenbankzugriffe. */
     private EntityManager _em;
 
 
@@ -111,7 +111,7 @@ public class Datenbank {
         query.setParameter( "begriff", begriff );
 
         try {
-            
+
             final GlossarEntity result = query.getSingleResult();
             return Optional.ofNullable( result );
         }
@@ -138,8 +138,8 @@ public class Datenbank {
 
         return eintrag.getId();
     }
-    
-    
+
+
     /**
      * Glossareintrag auf DB aktualisieren.
      *
@@ -148,11 +148,11 @@ public class Datenbank {
      * @return Neuer Zustand des Objekts
      */
     public GlossarEntity updateGlossarEintrag( GlossarEntity eintrag ) {
-        
-        final GlossarEntity ergebnis = _em.merge( eintrag ); 
-        
+
+        final GlossarEntity ergebnis = _em.merge( eintrag );
+
         LOG.info( "Glossareintrag für Begriff \"{}\" aktualisiert.", eintrag.getBegriff() );
-        
+
         return ergebnis;
     }
 
@@ -242,10 +242,10 @@ public class Datenbank {
     public AutorEntity updateAutor( AutorEntity autorNutzer ) {
 
         final AutorEntity ergebnis = _em.merge( autorNutzer );
-        
-        LOG.info( "Autor mit Nutzername \"{}\" aktualisiert.", 
+
+        LOG.info( "Autor mit Nutzername \"{}\" aktualisiert.",
                   ergebnis.getNutzername() );
-        
+
         return ergebnis;
     }
 
@@ -256,8 +256,8 @@ public class Datenbank {
      * zurückliegt. Diese Autoren sollen aus Sicherheitsgründen
      * deaktiviert werden.
      * <br><br>
-     * 
-     * Die Methode verwendet intern die <i>Criteria API</i> anstelle 
+     *
+     * Die Methode verwendet intern die <i>Criteria API</i> anstelle
      * von JPQL.
      *
      * @param anzahlMinuten Anzahl der Minuten, die der Autor inaktiv
