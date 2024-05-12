@@ -62,7 +62,7 @@ public class NutzerSperrenPeriodicTask {
 
         final String anzahlMinutenFormatiert = format( "%,d", _konfigurationMinutenInaktivitaet );
 
-        LOG.info( "Zeitspanne nach letztem Login, nachdem ein Nutzer gesperrt wird: {} Minuten",
+        LOG.info( "Zeitspanne nach letztem Login, nach der ein Nutzer gesperrt wird: {} Minuten",
                   anzahlMinutenFormatiert );
     }
 

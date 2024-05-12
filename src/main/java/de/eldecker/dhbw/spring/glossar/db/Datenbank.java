@@ -28,6 +28,11 @@ import jakarta.persistence.criteria.Root;
 
 /**
  * Repository-Bean, die alle Methoden für Zugriff auf Datenbank enthält.
+ * <br><br>
+ * 
+ * Achtung: Alle Methodenaufrufe für schreibende Zugriff müssen in 
+ * einer Transaktion stattfinden, z.B. {@code Transactional} annotierter
+ * Methode.
  */
 @Repository
 public class Datenbank {

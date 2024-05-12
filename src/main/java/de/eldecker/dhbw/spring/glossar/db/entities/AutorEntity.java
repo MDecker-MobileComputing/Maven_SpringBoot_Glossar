@@ -1,6 +1,5 @@
 package de.eldecker.dhbw.spring.glossar.db.entities;
 
-import static de.eldecker.dhbw.spring.glossar.db.entities.AutorEntity.NIE_ANGEMELDET_DATUM;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static java.time.LocalDateTime.ofEpochSecond;
 import static java.time.ZoneOffset.UTC;
@@ -22,14 +21,16 @@ import jakarta.persistence.Table;
  * und ändern kann.
  */
 @Entity
-@Table(name = "AUTOREN",
-         indexes = { @Index( name = "idx_nutzername", columnList = "nutzername" ) }
+@Table(
+	name = "AUTOREN",
+    indexes = { @Index( name = "idx_nutzername", columnList = "nutzername" ) }
 )
 public class AutorEntity {
 
     /** Dummy-Datum/Zeit am 1.1.1970 als Wert für "Nie angemeldet". */
     public static final LocalDateTime NIE_ANGEMELDET_DATUM = ofEpochSecond( 0, 0, UTC );
 
+    
     /**
      * Primärschlüssel, muss von uns nicht selbst befüllt werden, deshalb
      * gibt es auch keinen Setter für dieses Attribut.

@@ -44,7 +44,11 @@ public class NutzerAngemeldetHandler implements AuthenticationSuccessHandler {
     
     
     /**
-     * Methode wird aufgerufen, wenn sich ein Nutzer erfolgreich angemeldet hat.
+     * Methode wird aufgerufen, wenn sich ein Nutzer erfolgreich angemeldet hat:
+     * <ul>
+     * <li>Zeitpunkt letzte Anmeldung des Nutzers wird aktualisiert.</li>
+     * <li>Zähler für fehlgeschlagene Login-Versuche wird auf 0 zurückgesetzt.</li>
+     * </ul>
      * 
      * @param request HTTP-Request (wird hier nicht verwendet)
      * 
@@ -75,6 +79,8 @@ public class NutzerAngemeldetHandler implements AuthenticationSuccessHandler {
             
             final AutorEntity autor = autorOptional.get();
             autor.setLetzteAnmeldung( jetzt );
+            
+            autor.setAnmeldungGescheitert( 0 );
             
             _datenbank.updateAutor( autor );
         }
