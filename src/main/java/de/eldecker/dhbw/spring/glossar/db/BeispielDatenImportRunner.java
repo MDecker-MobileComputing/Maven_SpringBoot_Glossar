@@ -43,10 +43,10 @@ public class BeispielDatenImportRunner implements ApplicationRunner {
         _datenbank = datenbank;
     }
 
-    
+
     /**
      * Die Methode schreibt einige Datensätze in die Datenbank, aber nur, wenn es
-     * noch keinen einzigen Glossareintrag gibt. 
+     * noch keinen einzigen Glossareintrag gibt.
      */
     @Override
     @Transactional
@@ -57,53 +57,50 @@ public class BeispielDatenImportRunner implements ApplicationRunner {
 
         if ( anzahlEintraege > 0 ) {
 
-            LOG.info( "Beispiel-Daten werden nicht in DB geschrieben, da bereits Einträge vorhanden sind." );            
-            
+            LOG.info( "Beispiel-Daten werden nicht in DB geschrieben, da bereits Einträge vorhanden sind." );
+
         } else { // Beispieldatensätze in DB schreiben
 
             autorenNutzerErzeugen();
-            
+
             glossarEintraegeErzeugen();
-                                                
+
             LOG.info( "Beispiel-Daten wurden in DB geschrieben." );
         }
-        
-        
-        final List<AutorArtikelAnzahl> autorArtikelAnzahlListe = _datenbank.getGlossarCountPerAuthor();
-        LOG.info( "Anzahl Artikel pro Autor: " + autorArtikelAnzahlListe );
+
     }
 
-    
+
     /**
      * Einige Glossareinträge als Beispieldatensätze in DB schreiben.
      */
     private void glossarEintraegeErzeugen() {
-        
+
         final LocalDateTime jetzt = now();
 
         final AutorEntity alice = _datenbank.getAutorByName( "alice" ).get();
         final AutorEntity bob   = _datenbank.getAutorByName( "bob"   ).get();
-        
+
         final GlossarEntity ge1 = new GlossarEntity( "Maven"  , "Build-Management-Tool für Java-Projekte."           , jetzt, alice );
         final GlossarEntity ge2 = new GlossarEntity( "Phase"  , "Ein Maven-Lifecycle besteht aus mehreren Phasen."   , jetzt, alice );
         final GlossarEntity ge3 = new GlossarEntity( "pom.xml", "Zentrale Konfigurationsdatei für ein Maven-Projekt.", jetzt, bob   );
-                
+
         _datenbank.neuerGlossarEintrag( ge1 );
         _datenbank.neuerGlossarEintrag( ge2 );
         _datenbank.neuerGlossarEintrag( ge3 );
     }
-    
-    
+
+
     /**
      * Einige Autoren/Nutzer als Beispieldatensätze in DB schreiben.
-     */    
+     */
     private void autorenNutzerErzeugen() {
 
         final AutorEntity autor1 = new AutorEntity( "alice" , "g3h3im", true , NIE_ANGEMELDET_DATUM, 0 );
         final AutorEntity autor2 = new AutorEntity( "bob"   , "s3cr3t", true , NIE_ANGEMELDET_DATUM, 0 );
         final AutorEntity autor3 = new AutorEntity( "claire", "foobar", false, NIE_ANGEMELDET_DATUM, 0 ); // inaktiver Nutzer!
-        
-        _datenbank.neuerAutor( autor1 );             
+
+        _datenbank.neuerAutor( autor1 );
         _datenbank.neuerAutor( autor2 );
         _datenbank.neuerAutor( autor3 );
     }

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Glossar: Autorenstatistik</title>
+  <meta charset="utf-8" >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="../../styles.css">
+</head>
+<body>
+
+  <h1>Glossar: Autorenstatistik</h1>
+
+  <p>Anzahl Artikel, die jeder Autor neu erstellt hat:</p>
+
+  <ul>
+    <li th:each="item : ${artikel_pro_autor_liste}">
+        <span class="fett" th:text="${item.name}"></span>:
+        <span th:text="${item.anzahl}"></span>
+    </li>
+  </ul>
+
+</body>

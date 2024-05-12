@@ -13,6 +13,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 
 
@@ -25,12 +26,16 @@ import jakarta.persistence.Table;
 	name = "AUTOREN",
     indexes = { @Index( name = "idx_nutzername", columnList = "nutzername" ) }
 )
+@NamedQuery(name = "AutorEntity.GlossarCountPerAuthor",
+            query = "SELECT NEW de.eldecker.dhbw.spring.glossar.model.AutorArtikelAnzahl(g._autorErzeugung._nutzername, COUNT(g)) " +
+                    "FROM GlossarEntity g " +
+                    "GROUP BY g._autorErzeugung._nutzername")
 public class AutorEntity {
 
     /** Dummy-Datum/Zeit am 1.1.1970 als Wert für "Nie angemeldet". */
     public static final LocalDateTime NIE_ANGEMELDET_DATUM = ofEpochSecond( 0, 0, UTC );
 
-    
+
     /**
      * Primärschlüssel, muss von uns nicht selbst befüllt werden, deshalb
      * gibt es auch keinen Setter für dieses Attribut.
@@ -63,15 +68,15 @@ public class AutorEntity {
     @Column(name = "letzte_anmeldung")
     private LocalDateTime _letzteAnmeldung;
 
-    
-    /** 
+
+    /**
      * Zähler für Anzahl der gescheiterten Anmeldeversuche; wenn Anzahl Anmeldeversuche
      * Schwellwert überschreitet, dann wird das Konto auf inaktiv gesetzt.
      */
     @Column(name = "anmeldung_gescheitert")
     private int _anmeldungGescheitert;
 
-    
+
     /**
      * Default-Konstruktor, wird von JPA benötigt.
      */
@@ -83,14 +88,14 @@ public class AutorEntity {
         _anmeldungGescheitert = 0;
     }
 
-    
+
     /**
      * Konstruktor, mit dem alle Attribute bis auf die ID (Primärschüssel, wird von JPA vergeben)
      * gesetzt werden.
      */
-    public AutorEntity( String nutzername, 
-    		            String passwort, 
-    		            boolean istAktiv, 
+    public AutorEntity( String nutzername,
+    		            String passwort,
+    		            boolean istAktiv,
     		            LocalDateTime letzteAnmeldung,
     		            int anzahlAnmeldeversucheGescheitert ) {
 
@@ -100,8 +105,8 @@ public class AutorEntity {
         _letzteAnmeldung      = letzteAnmeldung;
         _anmeldungGescheitert = anzahlAnmeldeversucheGescheitert;
     }
-    
-    
+
+
     /**
      * Convenience-Konstruktor für ganz neuen Nutzer:
      * <ul>
@@ -111,7 +116,7 @@ public class AutorEntity {
      * </ul>
      */
     public AutorEntity( String nutzername, String passwort ) {
-    		             
+
     	this( nutzername, passwort, true, NIE_ANGEMELDET_DATUM, 0 );
     }
 
@@ -137,7 +142,7 @@ public class AutorEntity {
         return _nutzername;
     }
 
-    
+
     /**
      * Setter für Anmeldename des Nutzers
      *
@@ -223,28 +228,28 @@ public class AutorEntity {
         _letzteAnmeldung = letzteAnmeldung;
     }
 
-    
+
     /**
      * Getter für Anzahl der gescheiterten Anmeldeversuche.
-     * 
+     *
      * @return Anzahl gescheiterte Anmeldeversuche
      */
     public int getAnmeldungGescheitert() {
-    
+
     	return _anmeldungGescheitert;
     }
-    
-    
+
+
     /**
      * Setter für Anzahl gescheiterte Anmeldeversuche.
-     * 
+     *
      * @param anzahlGescheitert Neue Anzahl der gescheiterten Anmeldeversuche
      */
     public void setAnmeldungGescheitert( int anzahlGescheitert ) {
-    	
+
     	_anmeldungGescheitert = anzahlGescheitert;
     }
-    
+
 
     /**
      * Liefert String-Repräsentation des Objekts zurück.
@@ -303,7 +308,7 @@ public class AutorEntity {
                 Objects.equals( _letzteAnmeldung, other._letzteAnmeldung ) &&
                 Objects.equals( _nutzername     , other._nutzername      ) &&
                 Objects.equals( _passwort       , other._passwort        );
-                
+
     }
 
 }

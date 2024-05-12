@@ -30,9 +30,9 @@ import jakarta.persistence.criteria.Root;
 /**
  * Repository-Bean, die alle Methoden für Zugriff auf Datenbank enthält.
  * <br><br>
- * 
- * Achtung: Alle Methodenaufrufe für schreibende Zugriff müssen in 
- * einer Transaktion stattfinden, v.a. in einer mit {@code Transactional} 
+ *
+ * Achtung: Alle Methodenaufrufe für schreibende Zugriff müssen in
+ * einer Transaktion stattfinden, v.a. in einer mit {@code Transactional}
  * annotierten Methode.
  */
 @Repository
@@ -258,22 +258,23 @@ public class Datenbank {
 
     /**
      * Anzahl der von jedem Autor angelegten Artikel zählen.
-     * 
+     *
      * @return Liste enthält für jeden Autor ein Objekt mit der Anzahl der Artikel, die er ganz neu angelegt hat;
      *         es sind nur Autoren enthalten, die mindestens einen Artikel angelegt haben.
      */
     public List<AutorArtikelAnzahl> getGlossarCountPerAuthor() {
-        
-        final String jpql = "SELECT NEW de.eldecker.dhbw.spring.glossar.model.AutorArtikelAnzahl(g._autorErzeugung._nutzername, COUNT(g)) FROM GlossarEntity g GROUP BY g._autorErzeugung._nutzername";
-        
-        final TypedQuery<AutorArtikelAnzahl> query = _em.createQuery( jpql, AutorArtikelAnzahl.class );
-        
+
+
+
+        final TypedQuery<AutorArtikelAnzahl> query = _em.createNamedQuery( "AutorEntity.GlossarCountPerAuthor",
+                                                                           AutorArtikelAnzahl.class );
+
         final List<AutorArtikelAnzahl> results = query.getResultList();
-        
+
         return results;
     }
 
-    
+
     /**
      * Gibt Autoren zurück, für die {@code ist_active=true} gilt, deren
      * letzte Anmeldung aber schon mehr als {@code anzahlMinuten}
