@@ -18,8 +18,9 @@
 
   <ul>
     <li th:each="item : ${artikel_pro_autor_liste}">
-        <span class="fett" th:text="${item.name}"></span>:
+        <span class="fett" th:text="${item.name}"></span> :
         <span th:text="${item.anzahl}"></span>
+        ( <a th:href="@{autoreninfo/{name}(name=${item.name})}">Liste</a> )
     </li>
   </ul>
 
