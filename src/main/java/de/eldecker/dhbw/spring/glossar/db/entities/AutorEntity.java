@@ -28,8 +28,9 @@ import jakarta.persistence.Table;
 )
 @NamedQuery(name = "AutorEntity.GlossarCountPerAuthor",
             query = "SELECT NEW de.eldecker.dhbw.spring.glossar.model.AutorArtikelAnzahl(g._autorErzeugung._nutzername, COUNT(g)) " +
-                    "FROM GlossarEntity g " +
-                    "GROUP BY g._autorErzeugung._nutzername")
+                    "FROM GlossarEntity g "                   +
+                    "GROUP BY g._autorErzeugung._nutzername " +
+                    "ORDER BY COUNT(g) DESC")
 public class AutorEntity {
 
     /** Dummy-Datum/Zeit am 1.1.1970 als Wert für "Nie angemeldet". */

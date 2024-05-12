@@ -261,13 +261,13 @@ public class Datenbank {
      *
      * @return Liste enthält für jeden Autor ein Objekt mit der Anzahl der Artikel, die er ganz neu angelegt hat;
      *         es sind nur Autoren enthalten, die mindestens einen Artikel angelegt haben.
+     *         Die Liste ist nach Anzahl der Artikel absteigend sortiert.
      */
     public List<AutorArtikelAnzahl> getGlossarCountPerAuthor() {
 
-
-
-        final TypedQuery<AutorArtikelAnzahl> query = _em.createNamedQuery( "AutorEntity.GlossarCountPerAuthor",
-                                                                           AutorArtikelAnzahl.class );
+        final TypedQuery<AutorArtikelAnzahl> query =
+                    _em.createNamedQuery( "AutorEntity.GlossarCountPerAuthor",
+                              AutorArtikelAnzahl.class );
 
         final List<AutorArtikelAnzahl> results = query.getResultList();
 
