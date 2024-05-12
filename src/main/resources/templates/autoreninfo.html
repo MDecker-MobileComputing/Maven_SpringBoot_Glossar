@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8" >
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="../../styles.css">
+</head>
+<body>
+
+  <h1 th:text="${seitentitel}"></h1>
+
+  <p th:if="${fehlermeldung != null and #strings.length(fehlermeldung) > 0}">
+    <span class="fett">Fehlermeldung:</span>
+    <span th:text="${fehlermeldung}"></span>
+  </p>
+
+  <p>
+    Anzahl Einträge im Glossar, die dieser Autor neu erstellt hat: <span th:text="${#lists.size(eintraege)}"></span>
+  </p>
+
+  <br>
+
+  <div th:if="${#lists.size(eintraege) > 0}">  
+    <p class="fett">Von diesem Autor erstellte Einträge:</p>
+    <ul>
+      <li th:each="eintrag : ${eintraege}">
+        <a th:href="@{/app/eintrag/{id}(id=${eintrag.id})}" th:text="${eintrag.begriff}"></a>
+      </li>
+    </ul>  
+  </div>
+
+  <br>
+
+  <a href="/app/hauptseite">Zurück zur Hauptseite</a>
+</body>

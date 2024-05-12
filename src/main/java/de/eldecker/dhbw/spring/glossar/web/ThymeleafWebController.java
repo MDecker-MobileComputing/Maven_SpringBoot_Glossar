@@ -1,9 +1,13 @@
 package de.eldecker.dhbw.spring.glossar.web;
 
+import static java.util.Collections.EMPTY_LIST;
+
 import static java.lang.Long.parseLong;
 import static java.lang.String.format;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import de.eldecker.dhbw.spring.glossar.db.Datenbank;
+import de.eldecker.dhbw.spring.glossar.db.entities.AutorEntity;
 import de.eldecker.dhbw.spring.glossar.db.entities.GlossarEntity;
 import de.eldecker.dhbw.spring.glossar.model.AutorArtikelAnzahl;
 
@@ -85,7 +90,7 @@ public class ThymeleafWebController {
     
     /** Attribut-Key für Platzhalter in Template, das die Liste mit der Anzahl der Artikel pro Autor referenziert. */ 
     private static final String ATTRIBUT_ARTIKEL_PRO_AUTOR_LISTE = "artikel_pro_autor_liste";
-
+        
     /** Repository-Bean für Zugriff auf Datenbank. */
     private final Datenbank _datenbank;
 
@@ -226,14 +231,55 @@ public class ThymeleafWebController {
      * @return "autorenstatistik" (Name von Template-Datei ohne Datei-Endung)
      */
     @GetMapping( "/autorenstatistik" )
-    public String artikelProAutor ( Model model ) {
-        
-        
+    public String autorenstatistik ( Model model ) {
+                
         final List<AutorArtikelAnzahl> autorArtikelAnzahlListe = _datenbank.getGlossarCountPerAuthor();
         
         model.addAttribute( ATTRIBUT_ARTIKEL_PRO_AUTOR_LISTE, autorArtikelAnzahlListe);
         
         return "autorenstatistik";
+    }
+    
+    
+    /**
+     * Seite mit öffentlichen Infos zu einem Autor anzeigen; vorerst nur die Artikel, die er angelegt hat.
+     * 
+     * @param model Objekt, in das die Werte für die Platzhalter in der Template-Datei geschrieben werden.              
+     * 
+     * @param nutzername Name des Nutzers; es wird zuerst geprüft, ob es einen Autor mit diesem Namen gibt.
+     * 
+     * @return "autoreninfo" (Name von Template-Datei ohne Datei-Endung)
+     */
+    @GetMapping( "/autoreninfo/{nutzername}" )
+    public String artikelProAutor( Model model, 
+                                   @PathVariable("nutzername") String nutzername ) {
+                
+        
+        final Optional<AutorEntity> autorOptional = _datenbank.getAutorByName( nutzername );
+        if ( autorOptional.isEmpty() ) {
+            
+            LOG.warn( "Infoseite zu unbekanntem Autor \"{}\" aufgerufen.", nutzername );
+            model.addAttribute( ATTRIBUT_FEHLERMELDUNG, "Kein Autor mit Name \"" + nutzername + "\" bekannt." );
+            model.addAttribute( ATTRIBUT_SEITENTITEL  , "Infos zu Autor ???"                                  );
+            
+            model.addAttribute( ATTRIBUT_EINTRAEGE_LISTE, EMPTY_LIST );
+            
+        } else { // den autor gibt es, aber hat er auch Glossareinträge angelegt?
+                        
+            model.addAttribute( ATTRIBUT_SEITENTITEL, "Infos zu Autor \"" + nutzername + "\"" );
+            
+            final List<GlossarEntity> glossarEntityList = _datenbank.getGlossarEintraegeFuerAutor( nutzername );
+            if ( glossarEntityList.isEmpty() ) {
+                
+                model.addAttribute( ATTRIBUT_EINTRAEGE_LISTE, EMPTY_LIST );
+                
+            } else {
+                
+                model.addAttribute( ATTRIBUT_EINTRAEGE_LISTE, glossarEntityList );
+            }
+        }
+        
+        return "autoreninfo";
     }
     
     

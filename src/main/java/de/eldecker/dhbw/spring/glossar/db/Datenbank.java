@@ -277,6 +277,33 @@ public class Datenbank {
 
 
     /**
+     * Methode gibt alle Glossareinträge zurück, die von {@code autorName}
+     * neu angelegt wurden (Änderungen zählen nicht). 
+     * 
+     * @param autorName Name des Autor
+     * 
+     * @return Liste der Glossareinträge von {@code autorName}, alphabetisch sortiert 
+     *         nach Begriff; Liste ist leer, wenn {@code autorName} nicht existiert
+     *         oder keine Artikel neu angelegt hat.
+     */
+    public List<GlossarEntity> getGlossarEintraegeFuerAutor(String autorName) {
+
+        final String jpqlStr =
+                """
+                SELECT g FROM GlossarEntity g
+                       WHERE g._autorErzeugung._nutzername = :autorName
+                       ORDER BY g._begriff ASC
+                """;
+
+        final TypedQuery<GlossarEntity> query = _em.createQuery( jpqlStr, GlossarEntity.class );
+        
+        query.setParameter( "autorName", autorName );
+        
+        return query.getResultList();
+    }
+
+    
+    /**
      * Gibt Autoren zurück, für die {@code ist_active=true} gilt, deren
      * letzte Anmeldung aber schon mehr als {@code anzahlMinuten}
      * zurückliegt. Diese Autoren sollen aus Sicherheitsgründen

@@ -66,7 +66,6 @@ public class GlossarEntity {
     @Column(name = "zeitpunkt_aenderung")
     private LocalDateTime _zeitpunktAenderung;
 
-
     /**
      * Eine Glossar-Entity verweist auf den einen Autor, der den Eintrag ursprünglich angelegt hat; 
      * dieser Autor ändert sich auch nicht, wenn der Eintrag von anderen Nutzern geändert wird.
