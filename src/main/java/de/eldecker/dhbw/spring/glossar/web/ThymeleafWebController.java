@@ -215,7 +215,16 @@ public class ThymeleafWebController {
 
         return "neu_bearbeiten";
     }
+
     
+    /**
+     * Statistikseite anzeigen, die die Anzahl der pro Autor ganz neu angelegten Einträge anzeigt.
+     * 
+     * @param model Objekt, in das die Werte für die Platzhalter in der Template-Datei
+     *              geschrieben werden.
+     * 
+     * @return "autorenstatistik" (Name von Template-Datei ohne Datei-Endung)
+     */
     @GetMapping( "/autorenstatistik" )
     public String artikelProAutor ( Model model ) {
         
