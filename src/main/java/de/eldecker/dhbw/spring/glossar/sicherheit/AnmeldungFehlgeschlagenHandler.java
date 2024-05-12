@@ -51,7 +51,7 @@ public class AnmeldungFehlgeschlagenHandler implements AuthenticationFailureHand
 
     
     /**
-     * Da Konfigurationen erst nach der Ausführung des Konstruktors verfügbar sind
+     * Da Konfigurationen erst nach der Ausführung des Konstruktors verfügbar sind,
      * wird der konfigurierte Wert in dieser mit {@code PostConstruct} annotierten
      * Methode geloggt.
      */
