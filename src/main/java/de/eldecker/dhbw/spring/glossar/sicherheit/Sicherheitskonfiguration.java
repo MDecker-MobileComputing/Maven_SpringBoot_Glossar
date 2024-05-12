@@ -2,8 +2,6 @@ package de.eldecker.dhbw.spring.glossar.sicherheit;
 
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
-import de.eldecker.dhbw.spring.glossar.sicherheit.NutzerAngemeldetHandler;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +12,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 
@@ -32,6 +29,7 @@ public class Sicherheitskonfiguration {
     private final static String[] OEFFENTLICHE_PFADE_ARRAY = { "/index.html"     ,
                                                                "/abgemeldet.html",
                                                                "/styles.css"     ,
+                                                               "/anmeldungGescheitert.html",
                                                                "/h2-console/**"  ,
                                                                "/app/hauptseite" ,
                                                                "/app/eintrag/**"
@@ -40,6 +38,7 @@ public class Sicherheitskonfiguration {
     /** Objekt mit Event-Handler-Methode, die ausgeführt wird, wenn ein Nutzer sich erfolgreich angemeldet hat. */
     private final NutzerAngemeldetHandler _nutzerAngemeldetHandler;
 
+    /** Objekt mit Event-Handler-Methode, die ausgeführt wird, wenn eine Nutzeranmeldung fehlgeschlagen ist. */
     private final AnmeldungFehlgeschlagenHandler _anmeldungFehlgeschlagenHandler;
 
 
@@ -66,7 +65,7 @@ public class Sicherheitskonfiguration {
         return http.csrf( (csrf) -> csrf.disable() )
                    .authorizeHttpRequests( auth -> auth.requestMatchers( oeffentlichPfadMatcherArray ).permitAll()
                                                        .anyRequest().authenticated() )
-                   .formLogin( formLogin -> formLogin.successHandler( _nutzerAngemeldetHandler ) // im Handler wird auch Weiterleitung auf Hauptseite gemacht
+                   .formLogin( formLogin -> formLogin.successHandler( _nutzerAngemeldetHandler        ) // im Handler wird auch Weiterleitung auf Hauptseite gemacht
                 		                             .failureHandler( _anmeldungFehlgeschlagenHandler ) 
                 		     ) 
                    .logout(logout -> logout
