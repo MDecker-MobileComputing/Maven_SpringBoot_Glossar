@@ -19,11 +19,11 @@ public record Payload( String id,
                        String erklaerung ) { 
     
     /**
-     * Methode parst die ID (wenn vorhanden) von String nach {@code long}.
+     * Methode parst die ID (wenn vorhanden) von {@code String} nach {@code long}.
      * Für neue Einträge ist keine ID gesetzt, sondern nur für Änderungen.
      * 
      * @return Optional enthält ID des Eintrags wenn die ID gesetzt ist
-     *        und nach {@code long} geparst werden kann.
+     *         und nach {@code long} geparst werden kann.
      */
     public Optional<Long> holeID() {
         
