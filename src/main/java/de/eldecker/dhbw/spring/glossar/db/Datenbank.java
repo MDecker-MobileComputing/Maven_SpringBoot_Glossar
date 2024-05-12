@@ -268,7 +268,7 @@ public class Datenbank {
 
         final TypedQuery<AutorArtikelAnzahl> query =
                     _em.createNamedQuery( "AutorEntity.GlossarCountPerAuthor",
-                              AutorArtikelAnzahl.class );
+                                          AutorArtikelAnzahl.class );
 
         final List<AutorArtikelAnzahl> results = query.getResultList();
 
@@ -285,17 +285,13 @@ public class Datenbank {
      * @return Liste der Glossareinträge von {@code autorName}, alphabetisch sortiert 
      *         nach Begriff; Liste ist leer, wenn {@code autorName} nicht existiert
      *         oder keine Artikel neu angelegt hat.
+     *         Nur die Attribute ID und Begriff sind gefüllt!
      */
     public List<GlossarEntity> getGlossarEintraegeFuerAutor(String autorName) {
 
-        final String jpqlStr =
-                """
-                SELECT g FROM GlossarEntity g
-                       WHERE g._autorErzeugung._nutzername = :autorName
-                       ORDER BY g._begriff ASC
-                """;
-
-        final TypedQuery<GlossarEntity> query = _em.createQuery( jpqlStr, GlossarEntity.class );
+        final TypedQuery<GlossarEntity> query = 
+                    _em.createNamedQuery( "GlossarEntity.getGlossarEintraegeFuerAutor", 
+                                          GlossarEntity.class );
         
         query.setParameter( "autorName", autorName );
         
