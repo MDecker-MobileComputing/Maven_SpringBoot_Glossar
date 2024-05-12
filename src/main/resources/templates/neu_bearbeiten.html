@@ -16,6 +16,8 @@
     ( <a href="/logout">Logout</a> )
   </p>
 
+  <br>
+
   <p th:if="${fehlermeldung != null and #strings.length(fehlermeldung) > 0}">
     <span class="fett">Fehlermeldung:</span>
     <span th:text="${fehlermeldung}"></span>
