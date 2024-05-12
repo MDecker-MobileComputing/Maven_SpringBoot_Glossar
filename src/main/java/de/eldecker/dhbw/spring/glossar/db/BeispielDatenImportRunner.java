@@ -95,9 +95,9 @@ public class BeispielDatenImportRunner implements ApplicationRunner {
      */    
     private void autorenNutzerErzeugen() {
 
-        final AutorEntity autor1 = new AutorEntity( "alice" , "g3h3im", true , NIE_ANGEMELDET_DATUM );
-        final AutorEntity autor2 = new AutorEntity( "bob"   , "s3cr3t", true , NIE_ANGEMELDET_DATUM );
-        final AutorEntity autor3 = new AutorEntity( "claire", "foobar", false, NIE_ANGEMELDET_DATUM ); // inaktiver Nutzer!
+        final AutorEntity autor1 = new AutorEntity( "alice" , "g3h3im", true , NIE_ANGEMELDET_DATUM, 0 );
+        final AutorEntity autor2 = new AutorEntity( "bob"   , "s3cr3t", true , NIE_ANGEMELDET_DATUM, 0 );
+        final AutorEntity autor3 = new AutorEntity( "claire", "foobar", false, NIE_ANGEMELDET_DATUM, 0 ); // inaktiver Nutzer!
         
         _datenbank.neuerAutor( autor1 );             
         _datenbank.neuerAutor( autor2 );

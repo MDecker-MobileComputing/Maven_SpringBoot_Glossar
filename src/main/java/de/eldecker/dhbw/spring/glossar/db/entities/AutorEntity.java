@@ -1,5 +1,6 @@
 package de.eldecker.dhbw.spring.glossar.db.entities;
 
+import static de.eldecker.dhbw.spring.glossar.db.entities.AutorEntity.NIE_ANGEMELDET_DATUM;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static java.time.LocalDateTime.ofEpochSecond;
 import static java.time.ZoneOffset.UTC;
@@ -61,27 +62,56 @@ public class AutorEntity {
     @Column(name = "letzte_anmeldung")
     private LocalDateTime _letzteAnmeldung;
 
+    
+    /** 
+     * Zähler für Anzahl der gescheiterten Anmeldeversuche; wenn Anzahl Anmeldeversuche
+     * Schwellwert überschreitet, dann wird das Konto auf inaktiv gesetzt.
+     */
+    @Column(name = "anmeldung_gescheitert")
+    private int _anmeldungGescheitert;
 
+    
     /**
      * Default-Konstruktor, wird von JPA benötigt.
      */
     public AutorEntity() {
 
-        _nutzername      = "";
-        _istAktiv        = false;
-        _letzteAnmeldung = null;
+        _nutzername           = "";
+        _istAktiv             = false;
+        _letzteAnmeldung      = NIE_ANGEMELDET_DATUM;
+        _anmeldungGescheitert = 0;
     }
 
+    
     /**
      * Konstruktor, mit dem alle Attribute bis auf die ID (Primärschüssel, wird von JPA vergeben)
      * gesetzt werden.
      */
-    public AutorEntity( String nutzername, String passwort, boolean istAktiv, LocalDateTime letzteAnmeldung ) {
+    public AutorEntity( String nutzername, 
+    		            String passwort, 
+    		            boolean istAktiv, 
+    		            LocalDateTime letzteAnmeldung,
+    		            int anzahlAnmeldeversucheGescheitert ) {
 
-        _nutzername      = nutzername;
-        _passwort        = passwort;
-        _istAktiv        = istAktiv;
-        _letzteAnmeldung = letzteAnmeldung;
+        _nutzername           = nutzername;
+        _passwort             = passwort;
+        _istAktiv             = istAktiv;
+        _letzteAnmeldung      = letzteAnmeldung;
+        _anmeldungGescheitert = anzahlAnmeldeversucheGescheitert;
+    }
+    
+    
+    /**
+     * Convenience-Konstruktor für ganz neuen Nutzer:
+     * <ul>
+     * <li>Hat sich noch nie angemeldet</li>
+     * <li>Ist aktiv</li>
+     * <li>Anzahl Fehlversuche Anmeldung ist 0</i>
+     * </ul>
+     */
+    public AutorEntity( String nutzername, String passwort ) {
+    		             
+    	this( nutzername, passwort, true, NIE_ANGEMELDET_DATUM, 0 );
     }
 
 
@@ -192,6 +222,28 @@ public class AutorEntity {
         _letzteAnmeldung = letzteAnmeldung;
     }
 
+    
+    /**
+     * Getter für Anzahl der gescheiterten Anmeldeversuche.
+     * 
+     * @return Anzahl gescheiterte Anmeldeversuche
+     */
+    public int getAnmeldungGescheitert() {
+    
+    	return _anmeldungGescheitert;
+    }
+    
+    
+    /**
+     * Setter für Anzahl gescheiterte Anmeldeversuche.
+     * 
+     * @param anzahlGescheitert Neue Anzahl der gescheiterten Anmeldeversuche
+     */
+    public void setAnmeldungGescheitert( int anzahlGescheitert ) {
+    	
+    	_anmeldungGescheitert = anzahlGescheitert;
+    }
+    
 
     /**
      * Liefert String-Repräsentation des Objekts zurück.
@@ -216,7 +268,8 @@ public class AutorEntity {
         return Objects.hash( _nutzername,
                              _passwort,
                              _istAktiv,
-                             _letzteAnmeldung );
+                             _letzteAnmeldung,
+                             _anmeldungGescheitert );
     }
 
 
@@ -244,10 +297,12 @@ public class AutorEntity {
 
         final AutorEntity other = (AutorEntity) obj;
 
-        return _istAktiv == other._istAktiv                                &&
+        return _istAktiv             == other._istAktiv                    &&
+        	   _anmeldungGescheitert == other._anmeldungGescheitert        &&
                 Objects.equals( _letzteAnmeldung, other._letzteAnmeldung ) &&
                 Objects.equals( _nutzername     , other._nutzername      ) &&
                 Objects.equals( _passwort       , other._passwort        );
+                
     }
 
 }

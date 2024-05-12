@@ -24,6 +24,8 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class Sicherheitskonfiguration {
 
     private final static Logger LOG = LoggerFactory.getLogger( Sicherheitskonfiguration.class );
+    
+    
 
     /** Array mit Pfaden, auf die auch ohne Authentifizierung zugegriffen werden kann. */
     private final static String[] OEFFENTLICHE_PFADE_ARRAY = { "/index.html"     ,
