@@ -5,6 +5,7 @@ import static java.time.temporal.ChronoUnit.MINUTES;
 
 import de.eldecker.dhbw.spring.glossar.db.entities.AutorEntity;
 import de.eldecker.dhbw.spring.glossar.db.entities.GlossarEntity;
+import de.eldecker.dhbw.spring.glossar.model.AutorArtikelAnzahl;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -255,6 +256,24 @@ public class Datenbank {
     }
 
 
+    /**
+     * Anzahl der von jedem Autor angelegten Artikel zählen.
+     * 
+     * @return Liste enthält für jeden Autor ein Objekt mit der Anzahl der Artikel, die er ganz neu angelegt hat;
+     *         es sind nur Autoren enthalten, die mindestens einen Artikel angelegt haben.
+     */
+    public List<AutorArtikelAnzahl> getGlossarCountPerAuthor() {
+        
+        final String jpql = "SELECT NEW de.eldecker.dhbw.spring.glossar.model.AutorArtikelAnzahl(g._autorErzeugung._nutzername, COUNT(g)) FROM GlossarEntity g GROUP BY g._autorErzeugung._nutzername";
+        
+        final TypedQuery<AutorArtikelAnzahl> query = _em.createQuery( jpql, AutorArtikelAnzahl.class );
+        
+        final List<AutorArtikelAnzahl> results = query.getResultList();
+        
+        return results;
+    }
+
+    
     /**
      * Gibt Autoren zurück, für die {@code ist_active=true} gilt, deren
      * letzte Anmeldung aber schon mehr als {@code anzahlMinuten}

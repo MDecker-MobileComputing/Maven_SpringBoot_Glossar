@@ -6,8 +6,10 @@ import static java.time.LocalDateTime.now;
 
 import de.eldecker.dhbw.spring.glossar.db.entities.AutorEntity;
 import de.eldecker.dhbw.spring.glossar.db.entities.GlossarEntity;
+import de.eldecker.dhbw.spring.glossar.model.AutorArtikelAnzahl;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import jakarta.transaction.Transactional;
 
@@ -57,8 +59,6 @@ public class BeispielDatenImportRunner implements ApplicationRunner {
 
             LOG.info( "Beispiel-Daten werden nicht in DB geschrieben, da bereits Einträge vorhanden sind." );            
             
-            //LOG.info( "Inaktive Autoren:" + _datenbank.getInaktiveAutoren( 5 ) );
-            
         } else { // Beispieldatensätze in DB schreiben
 
             autorenNutzerErzeugen();
@@ -67,6 +67,10 @@ public class BeispielDatenImportRunner implements ApplicationRunner {
                                                 
             LOG.info( "Beispiel-Daten wurden in DB geschrieben." );
         }
+        
+        
+        final List<AutorArtikelAnzahl> autorArtikelAnzahlListe = _datenbank.getGlossarCountPerAuthor();
+        LOG.info( "Anzahl Artikel pro Autor: " + autorArtikelAnzahlListe );
     }
 
     

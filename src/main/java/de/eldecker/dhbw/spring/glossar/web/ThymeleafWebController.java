@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import de.eldecker.dhbw.spring.glossar.db.Datenbank;
 import de.eldecker.dhbw.spring.glossar.db.entities.GlossarEntity;
+import de.eldecker.dhbw.spring.glossar.model.AutorArtikelAnzahl;
 
 
 /**
@@ -82,6 +83,8 @@ public class ThymeleafWebController {
     /** Attribut-Key für Platzhalter in Template, das den Namen der Autors, der die letzten Änderung vorgenommen hat, enthält. */
     private static final String ATTRIBUT_AUTOR_AENDERUNG = "autor_aenderung";
     
+    /** Attribut-Key für Platzhalter in Template, das die Liste mit der Anzahl der Artikel pro Autor referenziert. */ 
+    private static final String ATTRIBUT_ARTIKEL_PRO_AUTOR_LISTE = "artikel_pro_autor_liste";
 
     /** Repository-Bean für Zugriff auf Datenbank. */
     private final Datenbank _datenbank;
@@ -211,6 +214,17 @@ public class ThymeleafWebController {
         model.addAttribute( ATTRIBUT_SEITENTITEL, "Eintrag im Glossar bearbeiten" );
 
         return "neu_bearbeiten";
+    }
+    
+    @GetMapping( "/autorenstatistik" )
+    public String artikelProAutor ( Model model ) {
+        
+        
+        final List<AutorArtikelAnzahl> autorArtikelAnzahlListe = _datenbank.getGlossarCountPerAuthor();
+        
+        model.addAttribute( ATTRIBUT_ARTIKEL_PRO_AUTOR_LISTE, autorArtikelAnzahlListe);
+        
+        return "autorenstatistik";
     }
     
     

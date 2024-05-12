@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 import de.eldecker.dhbw.spring.glossar.db.Datenbank;
 import de.eldecker.dhbw.spring.glossar.db.entities.AutorEntity;
 import de.eldecker.dhbw.spring.glossar.db.entities.GlossarEntity;
-import de.eldecker.dhbw.spring.glossar.helferlein.Payload;
+import de.eldecker.dhbw.spring.glossar.model.Payload;
 
 
 /**

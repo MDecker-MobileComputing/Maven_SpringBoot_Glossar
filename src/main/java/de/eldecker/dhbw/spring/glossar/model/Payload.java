@@ -1,4 +1,4 @@
-package de.eldecker.dhbw.spring.glossar.helferlein;
+package de.eldecker.dhbw.spring.glossar.model;
 
 import static java.lang.Long.parseLong;
 
@@ -22,8 +22,8 @@ public record Payload( String id,
      * Methode parst die ID (wenn vorhanden) von {@code String} nach {@code long}.
      * Für neue Einträge ist keine ID gesetzt, sondern nur für Änderungen.
      * 
-     * @return Optional enthält ID des Eintrags wenn die ID gesetzt ist
-     *         und nach {@code long} geparst werden kann.
+     * @return Optional enthält ID des Eintrags wenn die ID gesetzt ist und nach
+     *         {@code long} geparst werden kann.
      */
     public Optional<Long> holeID() {
         
@@ -42,4 +42,5 @@ public record Payload( String id,
             return Optional.empty(); 
         }
     }
+    
 }
