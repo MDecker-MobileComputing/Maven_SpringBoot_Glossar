@@ -261,7 +261,8 @@ public class Datenbank {
      *
      * @return Liste enthält für jeden Autor ein Objekt mit der Anzahl der Artikel, die er ganz neu angelegt hat;
      *         es sind nur Autoren enthalten, die mindestens einen Artikel angelegt haben.
-     *         Die Liste ist nach Anzahl der Artikel absteigend sortiert.
+     *         Die Liste ist nach Anzahl der Artikel absteigend sortiert; wenn mehrere Autoren dieselbe Anzahl
+     *         an Artikeln angelegt haben, dann sind diese Autoren in alphabetischer Reihenfolge
      */
     public List<AutorArtikelAnzahl> getGlossarCountPerAuthor() {
 
