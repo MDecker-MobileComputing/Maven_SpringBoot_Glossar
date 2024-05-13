@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import de.eldecker.dhbw.spring.glossar.db.Datenbank;
 import de.eldecker.dhbw.spring.glossar.db.entities.AutorEntity;
@@ -25,7 +25,7 @@ import java.util.Optional;
  * 
  * Default-Implementierung: {@code org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler}
  */
-@Component
+@Service
 public class AnmeldungFehlgeschlagenHandler implements AuthenticationFailureHandler {
 
     private final static Logger LOG = LoggerFactory.getLogger( AnmeldungFehlgeschlagenHandler.class );
