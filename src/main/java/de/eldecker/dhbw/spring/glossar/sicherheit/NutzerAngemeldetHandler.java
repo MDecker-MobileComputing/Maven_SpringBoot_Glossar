@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import de.eldecker.dhbw.spring.glossar.db.Datenbank;
 import de.eldecker.dhbw.spring.glossar.db.entities.AutorEntity;
@@ -24,7 +24,7 @@ import jakarta.transaction.Transactional;
 /**
  * Ein Objekt dieser Klasse wird in {@link Sicherheitskonfiguration} registriert.
  */
-@Component
+@Service
 public class NutzerAngemeldetHandler implements AuthenticationSuccessHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger( NutzerAngemeldetHandler.class );
