@@ -73,7 +73,7 @@ public class Sicherheitskonfiguration {
                                            .logoutSuccessUrl("/abgemeldet.html")
                                            .invalidateHttpSession( true )
                                            .deleteCookies( "JSESSIONID" )
-                       )
+                          )
                    .headers( headers -> headers.disable() ) // damit h2-console funktioniert
                    .build();
     }
