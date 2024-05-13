@@ -336,13 +336,17 @@ public class GlossarEntity {
      *
      * @return Hashwert basierend auf allen Attribute außer der ID.
      */
+    
+    
     @Override
     public int hashCode() {
 
         return Objects.hash( _begriff,
                              _erklaerung,
                              _zeitpunktErzeugung,
-                             _zeitpunktAenderung );
+                             _zeitpunktAenderung,
+                             _autorErzeugung,
+                             _autorAenderung );
     }
 
 
@@ -351,7 +355,7 @@ public class GlossarEntity {
      *
      * @return {@code true} gdw. {@code obj} auch eine Instanz von {@link GlossarEntity}
      *         ist und alle Werte (bis auf ID/Primärschlüssel) dieselben sind.
-     */
+     */    
     @Override
     public boolean equals( Object obj ) {
 
@@ -372,7 +376,9 @@ public class GlossarEntity {
         return Objects.equals( _begriff           , other._begriff            ) &&
                Objects.equals( _erklaerung        , other._erklaerung         ) &&
                Objects.equals( _zeitpunktErzeugung, other._zeitpunktErzeugung ) &&
-               Objects.equals( _zeitpunktAenderung, other._zeitpunktAenderung );
+               Objects.equals( _zeitpunktAenderung, other._zeitpunktAenderung ) &&
+               Objects.equals( _autorErzeugung    , other._autorErzeugung     ) &&
+               Objects.equals( _autorAenderung    , other._autorAenderung     );
     }
 
 }
