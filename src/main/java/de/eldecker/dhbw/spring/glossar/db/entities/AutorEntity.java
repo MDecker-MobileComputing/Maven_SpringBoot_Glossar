@@ -69,7 +69,6 @@ public class AutorEntity {
     @Column(name = "letzte_anmeldung")
     private LocalDateTime _letzteAnmeldung;
 
-
     /**
      * Zähler für Anzahl der gescheiterten Anmeldeversuche; wenn Anzahl Anmeldeversuche
      * Schwellwert überschreitet, dann wird das Konto auf inaktiv gesetzt.
@@ -254,6 +253,11 @@ public class AutorEntity {
 
     /**
      * Liefert String-Repräsentation des Objekts zurück.
+     * <br><br>
+     * 
+     * Vergleich von ID alleine reicht nicht aus, weil diese für neue Objekte
+     * erst beim Persistieren gesetzt wird; entsprechend darf die ID auch
+     * nicht beim Vergleich der Attribute berücksichtigt werden. 
      *
      * @return String enthält u.a. Name des Autors
      */
@@ -266,6 +270,11 @@ public class AutorEntity {
 
     /**
      * Berechnet Hashwert für das Objekt.
+     * <br><br>
+     * 
+     * Die ID darf nicht ein Input-Wert für die Hash-Berechnung sein,
+     * weil Sie für neue Objekte erst beim Persistieren von JPA
+     * gesetzt wird.  
      *
      * @return Hashwert für alle Attribute des Objekts (bis auf ID) ein.
      */
@@ -282,8 +291,12 @@ public class AutorEntity {
 
     /**
      * Vergleicht dieses Objekt mit {@code obj}.
+     * <br><br>
+     * 
+     * Vergleich von ID alleine reicht nicht aus, weil diese für neue Objekte
+     * erst beim Persistieren gesetzt wird. 
      *
-     * @return {@code true} gdw. wenn {@code obj} ist eine Instanz von {@code AutorEntity}
+     * @return {@code true} gdw. wenn {@code obj} eine Instanz von {@code AutorEntity} ist
      *         und alle Attribute bis auf den Primärschlüssel/ID denselben Wert haben.
      */
     @Override

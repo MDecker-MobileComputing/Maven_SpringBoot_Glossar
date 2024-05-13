@@ -333,11 +333,14 @@ public class GlossarEntity {
 
     /**
      * Berechnet Hashwert für Objekt.
+     * <br><br>
+     * 
+     * Die ID darf nicht ein Input-Wert für die Hash-Berechnung sein,
+     * weil Sie für neue Objekte erst beim Persistieren von JPA
+     * gesetzt wird. 
      *
      * @return Hashwert basierend auf allen Attribute außer der ID.
-     */
-    
-    
+     */        
     @Override
     public int hashCode() {
 
@@ -352,6 +355,11 @@ public class GlossarEntity {
 
     /**
      * Vergleicht alle Felder bis auf Primärschlüssel/ID.
+     * <br><br>
+     * 
+     * Vergleich von ID alleine reicht nicht aus, weil diese für neue Objekte
+     * erst beim Persistieren gesetzt wird; entsprechend darf die ID auch
+     * nicht beim Vergleich der Attribute berücksichtigt werden.
      *
      * @return {@code true} gdw. {@code obj} auch eine Instanz von {@link GlossarEntity}
      *         ist und alle Werte (bis auf ID/Primärschlüssel) dieselben sind.
