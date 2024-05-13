@@ -6,10 +6,8 @@ import static java.time.LocalDateTime.now;
 
 import de.eldecker.dhbw.spring.glossar.db.entities.AutorEntity;
 import de.eldecker.dhbw.spring.glossar.db.entities.GlossarEntity;
-import de.eldecker.dhbw.spring.glossar.model.AutorArtikelAnzahl;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import jakarta.transaction.Transactional;
 
