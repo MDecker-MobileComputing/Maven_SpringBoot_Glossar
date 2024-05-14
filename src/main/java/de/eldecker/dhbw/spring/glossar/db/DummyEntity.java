@@ -8,6 +8,7 @@ import jakarta.persistence.NamedQuery;
 
 /**
  * Dummy-Entity nur für {@code NamedQuery}-Annotationen.
+ * Die Tabelle wird auf der Datenbank angelegt, bleibt aber leer.
  */
 @NamedQuery(name = "GlossarEntity.getGlossarEintraegeFuerAutor",
 query = "SELECT new de.eldecker.dhbw.spring.glossar.db.entities.GlossarEntity( g._id, g._begriff ) " +
