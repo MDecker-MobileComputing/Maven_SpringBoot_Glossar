@@ -28,12 +28,6 @@ import jakarta.persistence.Table;
 @NamedQuery(name = "GlossarEntity.findByBegriff",
             query = "SELECT g FROM GlossarEntity g WHERE LOWER(g._begriff) = LOWER(:begriff)"
 )
-@NamedQuery(name = "GlossarEntity.getGlossarEintraegeFuerAutor",
-            query = "SELECT new de.eldecker.dhbw.spring.glossar.db.entities.GlossarEntity( g._id, g._begriff ) " +            
-                    "FROM GlossarEntity g " +
-                    "WHERE g._autorErzeugung._nutzername = :autorName " +
-                    "ORDER BY g._begriff ASC"            
-)
 public class GlossarEntity {
 
     /**
