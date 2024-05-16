@@ -180,7 +180,7 @@ public class Datenbank {
                 """
                 SELECT new de.eldecker.dhbw.spring.glossar.db.entities.GlossarEntity( g._id, g._begriff )
                        FROM GlossarEntity g
-                       ORDER BY g._begriff ASC
+                       ORDER BY LOWER( g._begriff ) ASC
                 """;
 
         final TypedQuery<GlossarEntity> query = _em.createQuery( jpqlStr, GlossarEntity.class );
