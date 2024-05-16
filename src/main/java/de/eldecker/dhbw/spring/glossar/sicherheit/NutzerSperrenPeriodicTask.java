@@ -11,6 +11,7 @@ import java.util.List;
 
 import jakarta.annotation.PostConstruct;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -46,6 +47,7 @@ public class NutzerSperrenPeriodicTask {
     /**
      * Konstruktor für <i>Dependency Injection</i>.
      */
+    @Autowired
     public NutzerSperrenPeriodicTask( Datenbank datenbank ) {
 
         _datenbank = datenbank;
