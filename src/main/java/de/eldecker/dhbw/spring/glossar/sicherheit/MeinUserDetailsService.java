@@ -49,7 +49,7 @@ public class MeinUserDetailsService implements UserDetailsService {
 
 
     /**
-     * Diese Methode wird aufgerufen, wenn ein Nutzer {@code nutzername} und {@code passwort}
+     * Diese Methode wird aufgerufen, wenn ein Nutzer {@code nutzername} und ein Passwort
      * im Anmeldeformular eingegeben hat. Es wird dann in der Datenbank nachgeschaut, ob es
      * einen aktiven Nutzer mit {@code nutzername} gibt. Ein inaktiver Nutzer wird wie ein
      * nicht existierender Nutzer behandelt (es wird aber eine Warnung auf den Logger
