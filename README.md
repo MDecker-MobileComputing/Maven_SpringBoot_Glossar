@@ -3,7 +3,8 @@
 <br>
 
 Dieses Repository enthält eine einfache Spring-Boot-Anwendung, die ein einfaches Glossar als Web-App enthält.
-Die Anwendung soll die Verwendung der [Jakarta Persistence API (JPA)](https://de.wikipedia.org/wiki/Jakarta_Persistence_API) demonstrieren.
+Die Anwendung soll die Verwendung der [Jakarta Persistence API (JPA)](https://de.wikipedia.org/wiki/Jakarta_Persistence_API) 
+demonstrieren.
 
 <br>
 
