@@ -74,7 +74,7 @@ public class Sicherheitskonfiguration {
                                            .invalidateHttpSession( true )
                                            .deleteCookies( "JSESSIONID" )
                           )
-                   .headers( headers -> headers.disable() ) // damit h2-console funktioniert
+                   .headers( headers -> headers.disable() ) // damit H2-Konsole funktioniert
                    .build();
     }
 
