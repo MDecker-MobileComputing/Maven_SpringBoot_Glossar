@@ -14,8 +14,8 @@ import jakarta.transaction.Transactional;
 import java.util.Optional;
 import java.time.LocalDateTime;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,7 +103,7 @@ public class RestApiController {
 
             payloadObjekt = _objectMapper.readValue( jsonPayload, Payload.class );
         }
-        catch ( JsonProcessingException ex ) {
+        catch ( JacksonException ex ) {
 
             LOG.error( "Fehler bei Deserialisierung von HTTP-Payload mit neuem Eintrag.", ex );
             return new ResponseEntity<>( "Ungültige JSON-Payload.", BAD_REQUEST );
