@@ -1,10 +1,5 @@
 package de.eldecker.dhbw.spring.glossar.sicherheit;
 
-import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.springframework.context.annotation.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -12,7 +7,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 
 /**
@@ -22,16 +16,16 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 @EnableWebSecurity
 public class Sicherheitskonfiguration {
-
-    private final static Logger LOG = LoggerFactory.getLogger( Sicherheitskonfiguration.class );
         
     /** Array mit Pfaden, auf die auch ohne Authentifizierung zugegriffen werden kann. */
-    private final static String[] OEFFENTLICHE_PFADE_ARRAY = { "/index.html"     ,
-                                                               "/abgemeldet.html",
-                                                               "/styles.css"     ,
+    private final static String[] OEFFENTLICHE_PFADE_ARRAY = { 
+    		                                                   "/"                         ,
+    		                                                   "/index.html"               ,
+                                                               "/abgemeldet.html"          ,
+                                                               "/glossar-styles.css"       ,
                                                                "/anmeldungGescheitert.html",
-                                                               "/h2-console/**"  ,
-                                                               "/app/hauptseite" ,
+                                                               "/h2-console/**"            ,
+                                                               "/app/hauptseite"           ,
                                                                "/app/eintrag/**"
                                                              };
 
@@ -60,10 +54,8 @@ public class Sicherheitskonfiguration {
     @Bean
     public SecurityFilterChain httpKonfiguration( HttpSecurity http ) throws Exception {
 
-        final AntPathRequestMatcher[] oeffentlichPfadMatcherArray = getMatcherFuerOeffentlichePfade();
-
         return http.csrf( (csrf) -> csrf.disable() )
-                   .authorizeHttpRequests( auth -> auth.requestMatchers( oeffentlichPfadMatcherArray ).permitAll()
+                   .authorizeHttpRequests( auth -> auth.requestMatchers( OEFFENTLICHE_PFADE_ARRAY ).permitAll()
                                                        .anyRequest().authenticated() )
                    .formLogin( formLogin -> formLogin.successHandler( _nutzerAngemeldetHandler        ) // im Handler wird auch Weiterleitung auf Hauptseite gemacht
                 		                             .failureHandler( _anmeldungFehlgeschlagenHandler ) 
@@ -74,27 +66,8 @@ public class Sicherheitskonfiguration {
                                            .invalidateHttpSession( true )
                                            .deleteCookies( "JSESSIONID" )
                           )
-                   .headers( headers -> headers.disable() ) // damit H2-Konsole funktioniert
+                   .headers( headers -> headers.disable() ) // damit h2-console funktioniert
                    .build();
-    }
-
-
-    /**
-     * Erzeugt für öffentliche Pfade aus String-Array in einen Array von {@code AntPathRequestMatcher}-Objekten.
-     *
-     * @return Array mit Matcher-Objekten für die öffentliche Pfade (Pfade, die ohne Authentifizierung aufgerufen werden können)
-     */
-    private static AntPathRequestMatcher[] getMatcherFuerOeffentlichePfade() {
-
-        final int anzahlOeffentlichePfade = OEFFENTLICHE_PFADE_ARRAY.length;
-        final AntPathRequestMatcher[] ergebnisArray = new AntPathRequestMatcher[ anzahlOeffentlichePfade ];
-        for ( int i = 0; i < anzahlOeffentlichePfade; i++ ) {
-
-            ergebnisArray[ i ] = antMatcher( OEFFENTLICHE_PFADE_ARRAY[i] );
-        }
-        LOG.info( "Anzahl öffentlicher Pfade: {}", anzahlOeffentlichePfade );
-
-        return ergebnisArray;
     }
 
 }

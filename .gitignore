@@ -35,5 +35,6 @@ build/
 
 ## Eigene Eintraege
 *.log
+*.gz
 *.db
 
