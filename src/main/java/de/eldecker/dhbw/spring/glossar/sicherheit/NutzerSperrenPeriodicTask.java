@@ -74,11 +74,13 @@ public class NutzerSperrenPeriodicTask {
      * die sich zu lange nicht mehr eingeloggt haben.
      * Es gibt aber keine parallel laufenden Instanzen dieser Methode.
      *
-     * Es werden Autoren gesperrt, die sich seit mindestens 5 Minuten
+     * Es werden Autoren gesperrt, die sich seit mindestens x Minuten
      * nicht mehr angemeldet haben (für eine produktive Anwendungen
-     * wäre dies ein Zeitraum von mehreren Wochen oder Monaten).
+     * wäre dies ein Zeitraum von mehreren Wochen oder Monaten);
+     * die Anzahl der Minuten x kann in der Datei {@code application.properties}
+     * eingestellt werden.
      */
-    @Scheduled(fixedRate = 3*60*1000)
+    @Scheduled(fixedRate = 3*60*1000)    
     @Transactional
     public void nutzerSperren() {
 
